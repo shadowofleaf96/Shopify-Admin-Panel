@@ -38,7 +38,7 @@ exports.getOrderInfo = async (req, res) => {
 
     if (response.ok) {
       const body = await response.json();
-      res.status(200).json({ order: body.order });
+      res.status(200).json({ orders: body.order });
     }
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -68,7 +68,9 @@ exports.updateOrder = async (req, res) => {
   try {
     const response = await client.put("orders/" + req.params.id, {
       data: {
-        order:req.body
+        product: {
+          title: req.body.title,
+        },
       },
     });
 
