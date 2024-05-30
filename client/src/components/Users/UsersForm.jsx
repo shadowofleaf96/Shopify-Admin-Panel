@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
-import LoadingSpinner from "../Utils/LoadingSpinner";
+import { FaSpinner } from "react-icons/fa6";
 
 const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
@@ -26,7 +26,7 @@ function AddUserForm({
       setFormData({
         avatar: null,
         username: initialData.username || "",
-        password: "", // Password is not populated for security reasons
+        password: "",
         role: initialData.role || "admin",
         email: initialData.email || "",
         status: initialData.status || "active",
@@ -62,7 +62,7 @@ function AddUserForm({
     try {
       if (isEditMode) {
         await axios.put(
-          `${backendUrl}api/users/update/${initialData._id}`,
+          `${backendUrl}api/users/${initialData._id}`,
           userData
         );
         toast.success("User updated successfully!");
@@ -82,7 +82,6 @@ function AddUserForm({
       refreshUsers();
       onClose();
     } catch (error) {
-      console.error("Error submitting user:", error);
       toast.error("An error occurred. Please try again.");
     } finally {
       setIsSubmitting(false);
@@ -92,7 +91,7 @@ function AddUserForm({
   return (
     <form onSubmit={handleSubmit} className="p-6 rounded-lg">
       <h2 className="text-lg font-semibold text-gray-800 mb-4">
-        {isEditMode ? "Edit User" : "Add User"} Form
+        {isEditMode ? "Edit User" : "Add User"}
       </h2>
       <div className="flex space-x-4 mb-4">
         <div className="w-1/2">
@@ -196,7 +195,7 @@ function AddUserForm({
           className="bg-blue-500 text-white py-2 font-light px-4 rounded transition-colors duration-200 hover:bg-blue-600"
         >
           {isSubmitting ? (
-            <LoadingSpinner />
+            <FaSpinner className="w-auto py-1 px-3 h-auto animate-spin text-white" />
           ) : isEditMode ? (
             "Update User"
           ) : (

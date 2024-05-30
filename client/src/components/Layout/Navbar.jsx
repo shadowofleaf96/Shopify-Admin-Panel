@@ -3,9 +3,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { UserContext } from "../../context/UserContext";
 import { FiUser, FiLogOut } from "react-icons/fi";
-import LoadingSpinner from "../Utils/LoadingSpinner";
 import { FaSpinner } from "react-icons/fa6";
-
 
 const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
@@ -149,7 +147,11 @@ function Navbar() {
                           className="flex w-full text-left py-2 text-sm text-red-900 hover:bg-gray-100 items-center gap-2"
                           onClick={handleLogout}
                         >
-                          {(loading && <LoadingSpinner />) || (
+                          {(loading && (
+                            <div className="py-2 px-4 flex items-center mx-auto gap-2">
+                              <FaSpinner size={18} className="animate-spin text-gray-500" />
+                            </div>
+                          )) || (
                             <div className="py-2 px-4 flex items-center gap-2">
                               <FiLogOut className="text-red-900" />
                               <span className="block text-sm font-semibold">

@@ -120,7 +120,7 @@ const Dashboard = () => {
               <h3 className="text-lg font-medium mb-2">Total Products</h3>
               <p className="text-2xl font-semibold">{productsInfo.total}</p>
             </div>
-            <BsCart size={40} className="ml-auto my-auto" />
+            <BsCart size={44} className="ml-auto my-auto" />
           </div>
           <div className="bg-white p-4 rounded-lg shadow-md flex hover:scale-105 transform transition duration-300 cursor-pointer">
             <div className="flex flex-col mr-4">

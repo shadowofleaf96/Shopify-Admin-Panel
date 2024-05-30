@@ -53,13 +53,17 @@ function Users() {
   };
 
   const handleEditUser = (user) => {
+    if (user._id === loggedInUserId) {
+      toast.error("You cannot delete the currently logged-in user.");
+      return;
+    }
     setEditingUser(user);
     setShowAddUserModal(true);
   };
 
   const openModal = (userId) => {
     if (userId === loggedInUserId) {
-      toast("You cannot delete the currently logged-in user.");
+      toast.error("You cannot delete the currently logged-in user.");
       return;
     }
     setModalIsOpen(true);
@@ -114,7 +118,7 @@ function Users() {
   const handleBulkDelete = () => {
     if (selectedUsers.length > 0) {
       if (selectedUsers.includes(loggedInUserId)) {
-        toast("You cannot delete the currently logged-in user.");
+        toast.error("You cannot delete the currently logged-in user.");
         return;
       }
       setUserToDelete(selectedUsers);
@@ -196,12 +200,6 @@ function Users() {
   const handleNextPage = () => {
     if (currentPage < totalPages) {
       setCurrentPage(currentPage + 1);
-    }
-  };
-
-  const handleModalBackgroundClick = (e) => {
-    if (e.target.classList.contains("modal-background")) {
-      closeAddUserModal();
     }
   };
 
@@ -357,18 +355,22 @@ function Users() {
                   </td>
                   <td className="px-4 py-4 text-sm whitespace-nowrap">
                     <div className="flex items-center gap-x-6">
-                      <button
-                        className="text-gray-800 transition-colors duration-200 hover:text-red-500 focus:outline-none"
-                        onClick={() => openModal(user._id)}
-                      >
-                        <FaRegTrashCan size={20} />
-                      </button>
-                      <button
-                        onClick={() => handleEditUser(user)}
-                        className="text-gray-800 transition-colors duration-200 hover:text-yellow-500 focus:outline-none"
-                      >
-                        <FaRegEdit size={20} />
-                      </button>
+                      <div className="h-auto w-auto">
+                        <button
+                          className="text-gray-800 transition-colors duration-200 hover:text-red-500 focus:outline-none"
+                          onClick={() => openModal(user._id)}
+                        >
+                          <FaRegTrashCan size={22} />
+                        </button>
+                      </div>
+                      <div className="h-auto w-auto">
+                        <button
+                          onClick={() => handleEditUser(user)}
+                          className="text-gray-800 transition-colors duration-200 hover:text-yellow-500 focus:outline-none"
+                        >
+                          <FaRegEdit size={22} />
+                        </button>
+                      </div>
                     </div>
                   </td>
                 </tr>
