@@ -266,17 +266,8 @@ function Products() {
                   className="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 cursor-pointer"
                   onClick={() => handleSort("status")}
                 >
-                  Price{" "}
-                  {sortConfig.key === "status" &&
-                    (sortConfig.direction === "ascending" ? " ▲" : " ▼")}
-                </th>
-                <th
-                  scope="col"
-                  className="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 cursor-pointer"
-                  onClick={() => handleSort("email")}
-                >
                   Status{" "}
-                  {sortConfig.key === "email" &&
+                  {sortConfig.key === "status" &&
                     (sortConfig.direction === "ascending" ? " ▲" : " ▼")}
                 </th>
               </tr>
