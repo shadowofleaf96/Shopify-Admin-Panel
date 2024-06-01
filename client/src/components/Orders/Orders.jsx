@@ -286,13 +286,6 @@ function Orders() {
                   {sortConfig.key === "status" &&
                     (sortConfig.direction === "ascending" ? " ▲" : " ▼")}
                 </th>
-                <th
-                  scope="col"
-                  className="relative py-3.5
-                  px-4"
-                >
-                  <span className="sr-only">Actions</span>
-                </th>
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
