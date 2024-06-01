@@ -286,6 +286,13 @@ function Orders() {
                   {sortConfig.key === "status" &&
                     (sortConfig.direction === "ascending" ? " ▲" : " ▼")}
                 </th>
+                <th
+                  scope="col"
+                  className="relative py-3.5
+                  px-4"
+                >
+                  <span className="sr-only">Actions</span>
+                </th>
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
@@ -318,13 +325,13 @@ function Orders() {
                     {order.phone}
                   </td>
                   <td className="px-4 py-4 text-sm text-gray-800 whitespace-nowrap">
-                  {`${order.shipping_address.address1} ${order.shipping_address.address2}`}
+                    {`${order.shipping_address.address1} ${order.shipping_address.address2}`}
                   </td>
                   <td className="px-4 py-4 text-sm text-gray-800 whitespace-nowrap">
                     {order.shipping_address.city}
                   </td>
                   <td className="px-4 py-4 text-sm text-gray-800 whitespace-nowrap">
-                  {order.total_price} DH
+                    {order.total_price} DH
                   </td>
                   <td className="px-4 py-4 text-sm whitespace-nowrap">
                     <div className="flex items-center gap-x-6">

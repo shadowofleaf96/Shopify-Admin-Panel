@@ -26,6 +26,7 @@ function Products() {
   const [editingProduct, setEditingProduct] = useState(null);
   const [productToDelete, setProductToDelete] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+
   const itemsPerPage = 5;
   const fetchProducts = async () => {
     setLoading(true);
@@ -39,7 +40,7 @@ function Products() {
     }
   };
 
-  console.log(products)
+  console.log(products);
 
   useEffect(() => {
     fetchProducts();
@@ -131,6 +132,12 @@ function Products() {
     }
   };
 
+  const getNestedValue = (obj, path) => {
+    return path
+      .split(".")
+      .reduce((o, key) => (o && o[key] !== undefined ? o[key] : null), obj);
+  };
+
   const handleSort = (key) => {
     let direction = "ascending";
     if (sortConfig.key === key && sortConfig.direction === "ascending") {
@@ -143,10 +150,25 @@ function Products() {
     let sortableProducts = [...products];
     if (sortConfig.key) {
       sortableProducts.sort((a, b) => {
-        if (a[sortConfig.key] < b[sortConfig.key]) {
+        let aValue, bValue;
+
+        if (sortConfig.key.startsWith("variants.")) {
+          const variantKey = sortConfig.key.split(".")[1];
+          aValue = Math.min(
+            ...a.variants.map((variant) => parseFloat(variant[variantKey] || 0))
+          );
+          bValue = Math.min(
+            ...b.variants.map((variant) => parseFloat(variant[variantKey] || 0))
+          );
+        } else {
+          aValue = getNestedValue(a, sortConfig.key);
+          bValue = getNestedValue(b, sortConfig.key);
+        }
+
+        if (aValue < bValue) {
           return sortConfig.direction === "ascending" ? -1 : 1;
         }
-        if (a[sortConfig.key] > b[sortConfig.key]) {
+        if (aValue > bValue) {
           return sortConfig.direction === "ascending" ? 1 : -1;
         }
         return 0;
@@ -228,37 +250,37 @@ function Products() {
                 <th
                   scope="col"
                   className="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 cursor-pointer"
-                  onClick={() => handleSort("productname")}
+                  onClick={() => handleSort("title")}
                 >
                   Product Name
-                  {sortConfig.key === "productname" &&
+                  {sortConfig.key === "title" &&
                     (sortConfig.direction === "ascending" ? " ▲" : " ▼")}
                 </th>
                 <th
                   scope="col"
                   className="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 cursor-pointer"
-                  onClick={() => handleSort("email")}
+                  onClick={() => handleSort("product_type")}
                 >
                   Category
-                  {sortConfig.key === "email" &&
+                  {sortConfig.key === "product_type" &&
                     (sortConfig.direction === "ascending" ? " ▲" : " ▼")}
                 </th>
                 <th
                   scope="col"
                   className="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 cursor-pointer"
-                  onClick={() => handleSort("email")}
+                  onClick={() => handleSort("variants.price")}
                 >
-                  Price{" "}
-                  {sortConfig.key === "email" &&
+                  Price
+                  {sortConfig.key === "variants.price" &&
                     (sortConfig.direction === "ascending" ? " ▲" : " ▼")}
                 </th>
                 <th
                   scope="col"
                   className="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 cursor-pointer"
-                  onClick={() => handleSort("role")}
+                  onClick={() => handleSort("variants.inventory_quantity")}
                 >
-                  Inventory Stock{" "}
-                  {sortConfig.key === "role" &&
+                  Inventory Stock
+                  {sortConfig.key === "variants.inventory_quantity" &&
                     (sortConfig.direction === "ascending" ? " ▲" : " ▼")}
                 </th>
                 <th
@@ -270,6 +292,13 @@ function Products() {
                   {sortConfig.key === "status" &&
                     (sortConfig.direction === "ascending" ? " ▲" : " ▼")}
                 </th>
+                <th
+                  scope="col"
+                  className="relative py-3.5
+                  px-4"
+                >
+                  <span className="sr-only">Actions</span>
+                </th>
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
@@ -278,7 +307,7 @@ function Products() {
                   <td className="px-4 py-4 text-sm text-gray-700 whitespace-nowrap">
                     <input
                       type="checkbox"
-                      className="text-blue-500 bproduct-gray-300 rounded"
+                      className="text-blue-500 border-gray-300 rounded"
                       onChange={() => handleCheckboxChange(product.id)}
                       checked={selectedProducts.includes(product.id)}
                     />
