@@ -18,7 +18,7 @@ exports.getAllProducts = async (req, res) => {
 
     if (response.ok) {
       const body = await response.json();
-      res.status(200).json({ products :body.products });
+      res.status(200).json({ products: body.products });
     }
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -30,7 +30,7 @@ exports.getProductInfo = async (req, res) => {
     const response = await client.get("products/" + req.params.id);
     if (response.ok) {
       const body = await response.json();
-      res.status(200).json({ products :body.product });
+      res.status(200).json({ products: body.product });
     }
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -42,7 +42,7 @@ exports.createProduct = async (req, res) => {
     const response = await client.post("products", {
       data: {
         product: {
-          title: req.body.title,
+          product: req.body,
         },
       },
     });
@@ -60,9 +60,7 @@ exports.updateProduct = async (req, res) => {
   try {
     const response = await client.put("products/" + req.params.id, {
       data: {
-        product: {
-          title: req.body.title,
-        },
+        product: req.body,
       },
     });
 
@@ -81,6 +79,18 @@ exports.deleteProduct = async (req, res) => {
     if (response.ok) {
       const body = await response.json();
       res.status(200).json({ message: "this product is deleted" });
+    }
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+exports.deleteVariant = async (req, res) => {
+  try {
+    const response = await client.delete("products/" + req.params.id + "/variants/" + req.params.variant);
+    if (response.ok) {
+      const body = await response.json();
+      res.status(200).json({ message: "this product's variant is deleted" });
     }
   } catch (error) {
     res.status(500).json({ error: error.message });

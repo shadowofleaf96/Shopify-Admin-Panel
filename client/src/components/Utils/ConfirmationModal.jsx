@@ -25,6 +25,7 @@ const ConfirmationModal = ({
   onConfirm,
   isLoading,
   isBulkDelete,
+  isVariantDelete,
 }) => (
   <Modal
     isOpen={isOpen}
@@ -35,8 +36,10 @@ const ConfirmationModal = ({
     <h2 className="text-lg font-medium text-gray-800">Delete Confirmation</h2>
     <p className="mt-4 text-sm text-gray-600">
       {isBulkDelete
-        ? "Are you sure you want to delete the selected users?"
-        : "Are you sure you want to delete this user?"}
+        ? "Are you sure you want to delete the selected element or elements?"
+        : isVariantDelete
+        ? "Are you sure you want to delete this variant?"
+        : "Are you sure you want to delete this element?"}
     </p>
     <div className="mt-6 flex justify-end gap-4">
       <button

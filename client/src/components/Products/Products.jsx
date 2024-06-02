@@ -3,6 +3,7 @@ import { FaRegTrashCan } from "react-icons/fa6";
 import { FaRegEdit, FaTimes } from "react-icons/fa";
 import { FaSpinner } from "react-icons/fa6";
 import { FaPlus } from "react-icons/fa6";
+import { FaChevronDown } from "react-icons/fa";
 import EditProductForm from "../Products/ProductsForm";
 import { toast } from "react-toastify";
 import axios from "axios";
@@ -13,6 +14,7 @@ const backendUrl = import.meta.env.VITE_BACKEND_URL;
 function Products() {
   const [products, setProducts] = useState([]);
   const [showEditProductModal, setShowEditProductModal] = useState(false);
+  const [expandedProductIds, setExpandedProductIds] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
@@ -22,9 +24,11 @@ function Products() {
   });
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [isBulkDelete, setIsBulkDelete] = useState(false);
+  const [isVariantDelete, setIsVariantDelete] = useState(false);
   const [selectedProducts, setSelectedProducts] = useState([]);
   const [editingProduct, setEditingProduct] = useState(null);
   const [productToDelete, setProductToDelete] = useState(null);
+  const [variantToDelete, setVariantToDelete] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
 
   const itemsPerPage = 5;
@@ -55,6 +59,15 @@ function Products() {
     setModalIsOpen(true);
     setProductToDelete(productId);
     setIsBulkDelete(false);
+    setIsVariantDelete(false);
+  };
+
+  const openVariantModal = (productId, variantId) => {
+    setModalIsOpen(true);
+    setProductToDelete(productId);
+    setVariantToDelete(variantId);
+    setIsBulkDelete(false);
+    setIsVariantDelete(true);
   };
 
   const closeModal = () => {
@@ -74,22 +87,62 @@ function Products() {
       setProducts((prevProducts) =>
         prevProducts.filter((product) => product.id !== productToDelete)
       );
-      toast.success("product deleted successfully");
+      toast.success("Product deleted successfully");
       setIsLoading(false);
       closeModal();
     } catch (error) {
-      console.error("Error deleting product:", error);
-      toast.error("Error deleting Products:", error);
+      console.error("Error deleting Product:", error);
+      toast.error("Error deleting Product:", error);
       setError(error);
       setIsLoading(false);
     }
   };
 
-  const handleCheckboxChange = (productId) => {
+  const handleDeleteVariant = async () => {
+    try {
+      setIsLoading(true);
+      await axios.delete(
+        `${backendUrl}api/products/${productToDelete}/variants/${variantToDelete}`
+      );
+
+      setProducts((prevProducts) =>
+        prevProducts.map((product) => {
+          if (product.id === productToDelete) {
+            return {
+              ...product,
+              variants: product.variants.filter(
+                (variant) => variant.id !== variantToDelete
+              ),
+            };
+          }
+          return product;
+        })
+      );
+
+      toast.success("Product variant deleted successfully");
+      setIsLoading(false);
+      closeModal();
+    } catch (error) {
+      console.error("Error deleting Product:", error);
+      toast.error("Error deleting Product:", error);
+      setError(error);
+      setIsLoading(false);
+    }
+  };
+
+  const handleProductCheckboxChange = (productId) => {
     setSelectedProducts((prevSelectedProducts) =>
       prevSelectedProducts.includes(productId)
         ? prevSelectedProducts.filter((id) => id !== productId)
         : [...prevSelectedProducts, productId]
+    );
+  };
+
+  const handleToggleVariantExpansion = (productId) => {
+    setExpandedProductIds((prevIds) =>
+      prevIds.includes(productId)
+        ? prevIds.filter((id) => id !== productId)
+        : [...prevIds, productId]
     );
   };
 
@@ -122,7 +175,7 @@ function Products() {
       );
       setSelectedProducts([]);
       closeModal();
-      toast.success("product or Products deleted successfully");
+      toast.success("Product or Products deleted successfully");
       setIsLoading(false);
     } catch (error) {
       console.error("Error deleting Products:", error);
@@ -218,6 +271,12 @@ function Products() {
             <FaRegTrashCan size={24} />
           </button>
         )}
+        <button
+          onClick={handleEditProduct}
+          className="flex items-center justify-center h-12 w-12 px-2 text-white bg-blue-400 rounded-full hover:bg-blue-500 focus:outline-none"
+        >
+          <FaPlus size={24} />
+        </button>
       </div>
       {showEditProductModal && (
         <div className="fixed inset-0 flex items-center justify-center z-50 bg-gray-900 bg-opacity-50">
@@ -303,93 +362,166 @@ function Products() {
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
               {currentItems.map((product) => (
-                <tr key={product.id}>
-                  <td className="px-4 py-4 text-sm text-gray-700 whitespace-nowrap">
-                    <input
-                      type="checkbox"
-                      className="text-blue-500 border-gray-300 rounded"
-                      onChange={() => handleCheckboxChange(product.id)}
-                      checked={selectedProducts.includes(product.id)}
-                    />
-                  </td>
-                  <td className="px-4 py-4 text-sm text-gray-800 whitespace-nowrap">
-                    <div className="flex items-center gap-x-2">
-                      <img
-                        className="object-cover w-10 h-10 rounded-full"
-                        src={product.image?.src}
-                        alt={product.image?.alt}
+                <React.Fragment key={product.id}>
+                  <tr>
+                    <td className="px-4 py-4 text-sm text-gray-800 whitespace-nowrap">
+                      <input
+                        type="checkbox"
+                        className="text-blue-500 mr-4 border-gray-300 rounded"
+                        onChange={() => handleProductCheckboxChange(product.id)}
+                        checked={selectedProducts.includes(product.id)}
                       />
-                      <div>
-                        <h2 className="font-medium text-gray-800">
-                          {product.title}
-                        </h2>
-                        <p className="text-sm font-normal text-gray-800">
-                          {product.handle}
-                        </p>
+                      <button
+                        onClick={() => handleToggleVariantExpansion(product.id)}
+                        className="text-gray-800 transition-colors duration-200 m-auto hover:text-gray-500 focus:outline-none"
+                      >
+                        {product.variants.length > 1 && (
+                          <FaChevronDown
+                            size={16}
+                            className={
+                              expandedProductIds.includes(product.id)
+                                ? "transform rotate-180 text-gray-800"
+                                : "text-gray-800"
+                            }
+                          />
+                        )}
+                      </button>
+                    </td>
+                    <td className="px-2 py-2 text-sm text-gray-800 whitespace-nowrap">
+                      {" "}
+                      <div className="flex items-center gap-x-1">
+                        {" "}
+                        <img
+                          className="object-cover w-12 h-12 rounded-full"
+                          src={product.image?.src}
+                          alt={product.image?.alt}
+                        />
+                        <div>
+                          <h2 className="font-medium text-gray-800">
+                            {product.title}
+                          </h2>
+                          {/* <p className="text-sm font-normal text-gray-800">
+                              {product.handle}
+                            </p> */}
+                        </div>
                       </div>
-                    </div>
-                  </td>
-                  <td className="px-4 py-4 text-sm text-gray-800 whitespace-nowrap">
-                    {product.product_type}
-                  </td>
-                  <td className="px-4 py-4 text-sm text-gray-800 whitespace-nowrap">
-                    {product.variants
-                      .map((variant) => `${variant.price} MAD`)
-                      .join(", ")}
-                  </td>
-                  <td className="px-4 py-4 text-sm text-gray-800 whitespace-nowrap">
-                    {product.variants
-                      .map((variant) => `${variant.inventory_quantity}`)
-                      .join(", ")}
-                  </td>
-                  <td className="px-4 py-4 text-sm font-medium text-gray-800 whitespace-nowrap">
-                    <div
-                      className={`inline-flex items-center px-3 py-1 rounded-full gap-x-2 ${
-                        product.status === "active"
-                          ? "bg-emerald-100/60"
-                          : "bg-red-100/60"
-                      }`}
-                    >
-                      <span
-                        className={`h-1.5 w-1.5 rounded-full ${
+                    </td>
+                    <td className="px-4 py-4 text-sm text-gray-800 whitespace-nowrap">
+                      {product.product_type}
+                    </td>
+                    <td className="px-4 py-4 text-sm text-gray-800 whitespace-nowrap">
+                      {product.variants[0]?.price}{" "}
+                      {/* Show first variant price */}
+                    </td>
+                    <td className="px-4 py-4 text-sm text-gray-800 whitespace-nowrap">
+                      {product.variants[0]?.inventory_quantity}{" "}
+                      {/* Show first variant inventory */}
+                    </td>
+                    <td className="px-4 py-4 text-sm font-medium text-gray-800 whitespace-nowrap">
+                      <div
+                        className={`inline-flex items-center px-3 py-1 rounded-full gap-x-2 ${
                           product.status === "active"
-                            ? "bg-emerald-500"
-                            : "bg-red-500"
-                        }`}
-                      ></span>
-                      <span
-                        className={`text-sm font-normal ${
-                          product.status === "active"
-                            ? "text-emerald-500"
-                            : "text-red-500"
+                            ? "bg-emerald-100/60"
+                            : "bg-red-100/60"
                         }`}
                       >
-                        {product.status.charAt(0).toUpperCase() +
-                          product.status.slice(1)}
-                      </span>
-                    </div>
-                  </td>
-                  <td className="px-4 py-4 text-sm whitespace-nowrap">
-                    <div className="flex items-center gap-x-6">
-                      <div className="h-auto w-auto">
-                        <button
-                          className="text-gray-800 transition-colors duration-200 hover:text-red-500 focus:outline-none"
-                          onClick={() => openModal(product.id)}
+                        <span
+                          className={`h-1.5 w-1.5 rounded-full ${
+                            product.status === "active"
+                              ? "bg-emerald-500"
+                              : "bg-red-500"
+                          }`}
+                        ></span>
+                        <span
+                          className={`text-sm font-normal ${
+                            product.status === "active"
+                              ? "text-emerald-500"
+                              : "text-red-500"
+                          }`}
                         >
-                          <FaRegTrashCan size={22} />
-                        </button>
+                          {product.status.charAt(0).toUpperCase() +
+                            product.status.slice(1)}
+                        </span>
                       </div>
-                      <div className="h-auto w-auto">
-                        <button
-                          onClick={() => handleEditProduct(product)}
-                          className="text-gray-800 transition-colors duration-200 hover:text-yellow-500 focus:outline-none"
-                        >
-                          <FaRegEdit size={22} />
-                        </button>
+                    </td>
+                    <td className="px-4 py-4 text-sm whitespace-nowrap">
+                      <div className="flex items-center gap-x-6">
+                        <div className="h-auto w-auto">
+                          <button
+                            className="text-gray-800 transition-colors duration-200 hover:text-red-500 focus:outline-none"
+                            onClick={() => openModal(product.id)}
+                          >
+                            <FaRegTrashCan size={22} />
+                          </button>
+                        </div>
+                        <div className="h-auto w-auto">
+                          <button
+                            onClick={() => handleEditProduct(product)}
+                            className="text-gray-800 transition-colors duration-200 hover:text-yellow-500 focus:outline-none"
+                          >
+                            <FaRegEdit size={22} />
+                          </button>
+                        </div>
                       </div>
-                    </div>
-                  </td>
-                </tr>
+                    </td>
+                  </tr>
+                  {expandedProductIds.includes(product.id) &&
+                    product.variants.map((variant, index) => (
+                      <tr
+                        key={`${product.id}-${index}`}
+                        className="border-t border-gray-200"
+                      >
+                        <td className="px-4 py-4 text-sm text-gray-700 whitespace-nowrap"></td>
+                        <td className="px-4 py-4 text-sm text-gray-800 whitespace-nowrap">
+                          {/* Name */}
+                          <div>
+                            <span className="font-medium">
+                              Variant {index + 1}
+                            </span>
+                          </div>
+                        </td>
+                        <td className="px-4 py-4 text-sm text-gray-800 whitespace-nowrap">
+                          {/* Category (Leave Empty) */}
+                        </td>
+                        <td className="px-4 py-4 text-sm text-gray-800 whitespace-nowrap">
+                          {/* Price */}
+                          {variant.price}
+                        </td>
+                        <td className="px-4 py-4 text-sm text-gray-800 whitespace-nowrap">
+                          {/* Inventory Stock */}
+                          {variant.inventory_quantity}
+                        </td>
+                        <td className="px-4 py-4 text-sm font-medium text-gray-800 whitespace-nowrap">
+                          {/* Status (Leave Empty) */}
+                        </td>
+                        <td className="px-4 py-4 text-sm whitespace-nowrap">
+                          {/* Edit and Delete Buttons */}
+                          <div className="flex items-center gap-x-6">
+                            <div className="h-auto w-auto flex justify-center items-center">
+                              <button
+                                className="text-gray-800 transition-colors duration-200 hover:text-red-500 focus:outline-none"
+                                onClick={() =>
+                                  openVariantModal(product.id, variant.id)
+                                }
+                              >
+                                <FaRegTrashCan size={18} />
+                              </button>
+                            </div>
+                            <div className="h-auto w-auto flex justify-center items-center">
+                              <button
+                                className="text-gray-800 transition-colors duration-200 hover:text-yellow-500 focus:outline-none"
+                                onClick={() =>
+                                  handleEditVariant(product.id, variant.id)
+                                }
+                              >
+                                <FaRegEdit size={18} />
+                              </button>
+                            </div>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                </React.Fragment>
               ))}
             </tbody>
           </table>
@@ -461,7 +593,13 @@ function Products() {
       <ConfirmationModal
         isOpen={modalIsOpen}
         onRequestClose={closeModal}
-        onConfirm={isBulkDelete ? handleConfirmBulkDelete : handleDeleteProduct}
+        onConfirm={
+          isBulkDelete
+            ? handleConfirmBulkDelete
+            : isVariantDelete
+            ? handleDeleteVariant
+            : handleDeleteProduct
+        }
         isLoading={isLoading}
         isBulkDelete={isBulkDelete}
       />
