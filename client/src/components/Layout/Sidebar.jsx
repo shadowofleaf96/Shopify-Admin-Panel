@@ -1,10 +1,11 @@
 import React from "react";
 import { FaBoxOpen, FaHome, FaUser } from "react-icons/fa";
 import { FaCartShopping } from "react-icons/fa6";
-
+import { Link, useLocation } from "react-router-dom";
 
 function Sidebar() {
-  const pathname = window.location.pathname;
+  const location = useLocation();
+  const pathname = location.pathname;
 
   const SideElements = [
     {
@@ -39,18 +40,18 @@ function Sidebar() {
         <section className="space-y-6">
           <div className="space-y-3">
             {SideElements.map((item) => (
-              <a
+              <Link
                 key={item.name}
                 className={`flex items-center px-3 py-2 text-gray-800 transition-colors duration-300 transform rounded-lg hover:bg-gray-100 hover:text-gray-700 ${
                   item.current ? "bg-gray-100 text-gray-700" : ""
                 }`}
-                href={item.href}
+                to={item.href}
               >
                 {item.icon}
                 <span className="ml-2 text-md font-medium text-gray-800">
                   {item.name}
                 </span>
-              </a>
+              </Link>
             ))}
           </div>
         </section>

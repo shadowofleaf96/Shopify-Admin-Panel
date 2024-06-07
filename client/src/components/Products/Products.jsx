@@ -5,6 +5,7 @@ import { FaSpinner } from "react-icons/fa6";
 import { FaPlus } from "react-icons/fa6";
 import { FaChevronDown } from "react-icons/fa";
 import EditProductForm from "../Products/ProductsForm";
+import EditVariantForm from "../Products/VariantsForm";
 import { toast } from "react-toastify";
 import axios from "axios";
 import ConfirmationModal from "../Utils/ConfirmationModal";
@@ -30,6 +31,10 @@ function Products() {
   const [productToDelete, setProductToDelete] = useState(null);
   const [variantToDelete, setVariantToDelete] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [showEditVariantModal, setShowEditVariantModal] = useState(false);
+  const [editingVariant, setEditingVariant] = useState(null);
+  const [editingProductForVariant, setEditingProductForVariant] =
+    useState(null);
 
   const itemsPerPage = 5;
   const fetchProducts = async () => {
@@ -44,8 +49,6 @@ function Products() {
     }
   };
 
-  console.log(products);
-
   useEffect(() => {
     fetchProducts();
   }, []);
@@ -53,6 +56,29 @@ function Products() {
   const handleEditProduct = (product) => {
     setEditingProduct(product);
     setShowEditProductModal(true);
+  };
+
+  const handleAddProduct = () => {
+    setEditingProduct(null);
+    setShowEditProductModal(true);
+  };
+
+  const handleAddVariant = (product) => {
+    setEditingProductForVariant(product);
+    setEditingVariant(null);
+    setShowEditVariantModal(true);
+  };
+
+  const handleEditVariant = (product, variant) => {
+    setEditingProductForVariant(product);
+    setEditingVariant(variant);
+    setShowEditVariantModal(true);
+  };
+
+  const closeEditVariantModal = () => {
+    setShowEditVariantModal(false);
+    setEditingVariant(null);
+    setEditingProductForVariant(null);
   };
 
   const openModal = (productId) => {
@@ -272,7 +298,7 @@ function Products() {
           </button>
         )}
         <button
-          onClick={handleEditProduct}
+          onClick={handleAddProduct}
           className="flex items-center justify-center h-12 w-12 px-2 text-white bg-blue-400 rounded-full hover:bg-blue-500 focus:outline-none"
         >
           <FaPlus size={24} />
@@ -286,6 +312,19 @@ function Products() {
               refreshProducts={fetchProducts}
               initialData={editingProduct}
               isEditMode={!!editingProduct}
+            />
+          </div>
+        </div>
+      )}
+      {showEditVariantModal && (
+        <div className="fixed inset-0 flex items-center justify-center z-50 bg-gray-900 bg-opacity-50">
+          <div className="bg-white p-4 rounded-lg shadow-lg w-3/4 max-w-2xl">
+            <EditVariantForm
+              onClose={closeEditVariantModal}
+              refreshVariants={fetchProducts}
+              initialData={editingVariant}
+              isEditMode={!!editingVariant}
+              product={editingProductForVariant}
             />
           </div>
         </div>
@@ -339,6 +378,15 @@ function Products() {
                   onClick={() => handleSort("variants.inventory_quantity")}
                 >
                   Inventory Stock
+                  {sortConfig.key === "variants.inventory_quantity" &&
+                    (sortConfig.direction === "ascending" ? " ▲" : " ▼")}
+                </th>
+                <th
+                  scope="col"
+                  className="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 cursor-pointer"
+                  onClick={() => handleSort("variants.inventory_quantity")}
+                >
+                  Vendor
                   {sortConfig.key === "variants.inventory_quantity" &&
                     (sortConfig.direction === "ascending" ? " ▲" : " ▼")}
                 </th>
@@ -417,6 +465,9 @@ function Products() {
                       {product.variants[0]?.inventory_quantity}{" "}
                       {/* Show first variant inventory */}
                     </td>
+                    <td className="px-4 py-4 text-sm text-gray-800 whitespace-nowrap">
+                      {product.vendor} {/* Show first variant inventory */}
+                    </td>
                     <td className="px-4 py-4 text-sm font-medium text-gray-800 whitespace-nowrap">
                       <div
                         className={`inline-flex items-center px-3 py-1 rounded-full gap-x-2 ${
@@ -448,6 +499,14 @@ function Products() {
                       <div className="flex items-center gap-x-6">
                         <div className="h-auto w-auto">
                           <button
+                            className="text-gray-800 transition-colors duration-200 hover:text-green-500 focus:outline-none"
+                            onClick={() => handleAddVariant(product)}
+                          >
+                            <FaPlus size={18} />
+                          </button>
+                        </div>
+                        <div className="h-auto w-auto">
+                          <button
                             className="text-gray-800 transition-colors duration-200 hover:text-red-500 focus:outline-none"
                             onClick={() => openModal(product.id)}
                           >
@@ -476,7 +535,7 @@ function Products() {
                           {/* Name */}
                           <div>
                             <span className="font-medium">
-                              Variant {index + 1}
+                              {variant.title}
                             </span>
                           </div>
                         </td>
@@ -490,6 +549,9 @@ function Products() {
                         <td className="px-4 py-4 text-sm text-gray-800 whitespace-nowrap">
                           {/* Inventory Stock */}
                           {variant.inventory_quantity}
+                        </td>
+                        <td className="px-4 py-4 text-sm font-medium text-gray-800 whitespace-nowrap">
+                          {/* Status (Leave Empty) */}
                         </td>
                         <td className="px-4 py-4 text-sm font-medium text-gray-800 whitespace-nowrap">
                           {/* Status (Leave Empty) */}
@@ -511,7 +573,7 @@ function Products() {
                               <button
                                 className="text-gray-800 transition-colors duration-200 hover:text-yellow-500 focus:outline-none"
                                 onClick={() =>
-                                  handleEditVariant(product.id, variant.id)
+                                  handleEditVariant(product, variant)
                                 }
                               >
                                 <FaRegEdit size={18} />
