@@ -57,7 +57,7 @@ function Navbar() {
         >
           <a className="me-5 md:me-8" href="/">
             <img
-              className="flex-none text-xl font-semibold"
+              className="flex-none object-cover max-h-24 text-xl font-semibold"
               src="/logo-wlidaty.webp"
               aria-label="Brand"
             />

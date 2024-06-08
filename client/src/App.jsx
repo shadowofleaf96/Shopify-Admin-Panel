@@ -8,6 +8,7 @@ const Layout = lazy(() => import("./pages/LayoutPage"));
 const Dashboard = lazy(() => import("./pages/DashboardPage"));
 const Users = lazy(() => import("./pages/UsersPage"));
 const Orders = lazy(() => import("./pages/OrdersPage"));
+const NotFound = lazy(() => import("./components/Error/NotFound"));
 const Products = lazy(() => import("./pages/ProductsPage"));
 const ProtectedRoute = lazy(() => import("./components/Utils/ProtectedRoute"));
 
@@ -31,6 +32,7 @@ function App() {
               <Route path="orders" element={<Orders />} />
             </Route>
           </Route>
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </Suspense>
     </UserProvider>

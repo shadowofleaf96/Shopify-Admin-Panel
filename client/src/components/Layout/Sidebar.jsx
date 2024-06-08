@@ -12,25 +12,25 @@ function Sidebar() {
       name: "Dashboard",
       href: `/`,
       current: pathname === `/`,
-      icon: <FaHome size={24} className="text-gray-800" />,
+      icon: <FaHome size={24} className="text-blue-500" />,
     },
     {
       name: "Users",
       href: `/users/`,
       current: pathname === `/users/`,
-      icon: <FaUser size={24} className="text-gray-800" />,
+      icon: <FaUser size={24} className="text-blue-500" />,
     },
     {
       name: "Products",
       href: `/products/`,
       current: pathname === `/products/`,
-      icon: <FaBoxOpen size={24} className="text-gray-800" />,
+      icon: <FaBoxOpen size={24} className="text-blue-500" />,
     },
     {
       name: "Orders",
       href: `/orders/`,
       current: pathname === `/orders/`,
-      icon: <FaCartShopping size={24} className="text-gray-800" />,
+      icon: <FaCartShopping size={24} className="text-blue-500" />,
     },
   ];
 
@@ -42,13 +42,13 @@ function Sidebar() {
             {SideElements.map((item) => (
               <Link
                 key={item.name}
-                className={`flex items-center px-3 py-2 text-gray-800 transition-colors duration-300 transform rounded-lg hover:bg-gray-100 hover:text-gray-700 ${
+                className={`flex items-center px-3 py-2 text-gray-700 transition-colors duration-300 transform rounded-lg hover:bg-gray-100 hover:text-gray-700 ${
                   item.current ? "bg-gray-100 text-gray-700" : ""
                 }`}
                 to={item.href}
               >
                 {item.icon}
-                <span className="ml-2 text-md font-medium text-gray-800">
+                <span className="ml-2 text-md font-medium text-gray-700">
                   {item.name}
                 </span>
               </Link>

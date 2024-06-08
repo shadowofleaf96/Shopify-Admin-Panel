@@ -259,13 +259,13 @@ function Products() {
   if (loading) {
     return (
       <div className="flex justify-center items-center min-h-screen">
-        <FaSpinner size={40} className="animate-spin text-gray-500" />
+        <FaSpinner size={40} className="animate-spin text-blue-500" />
       </div>
     );
   }
 
   if (error) {
-    return <div>Error: {error.message}</div>;
+    return <div className="flex justify-center items-center min-h-screen text-lg">Error: {error.message}</div>;
   }
 
   const indexOfLastItem = currentPage * itemsPerPage;
@@ -499,7 +499,7 @@ function Products() {
                       <div className="flex items-center gap-x-6">
                         <div className="h-auto w-auto">
                           <button
-                            className="text-gray-800 transition-colors duration-200 hover:text-green-500 focus:outline-none"
+                            className="text-gray-500 transition-colors duration-200 hover:text-green-500 focus:outline-none"
                             onClick={() => handleAddVariant(product)}
                           >
                             <FaPlus size={18} />
@@ -507,7 +507,7 @@ function Products() {
                         </div>
                         <div className="h-auto w-auto">
                           <button
-                            className="text-gray-800 transition-colors duration-200 hover:text-red-500 focus:outline-none"
+                            className="text-red-600 transition-colors duration-200 hover:text-red-500 focus:outline-none"
                             onClick={() => openModal(product.id)}
                           >
                             <FaRegTrashCan size={22} />
@@ -516,7 +516,7 @@ function Products() {
                         <div className="h-auto w-auto">
                           <button
                             onClick={() => handleEditProduct(product)}
-                            className="text-gray-800 transition-colors duration-200 hover:text-yellow-500 focus:outline-none"
+                            className="text-blue-500 transition-colors duration-200 hover:text-yellow-500 focus:outline-none"
                           >
                             <FaRegEdit size={22} />
                           </button>
@@ -561,7 +561,7 @@ function Products() {
                           <div className="flex items-center gap-x-6">
                             <div className="h-auto w-auto flex justify-center items-center">
                               <button
-                                className="text-gray-800 transition-colors duration-200 hover:text-red-500 focus:outline-none"
+                                className="text-red-600 transition-colors duration-200 hover:text-red-500 focus:outline-none"
                                 onClick={() =>
                                   openVariantModal(product.id, variant.id)
                                 }
@@ -571,7 +571,7 @@ function Products() {
                             </div>
                             <div className="h-auto w-auto flex justify-center items-center">
                               <button
-                                className="text-gray-800 transition-colors duration-200 hover:text-yellow-500 focus:outline-none"
+                                className="text-blue-500 transition-colors duration-200 hover:text-yellow-500 focus:outline-none"
                                 onClick={() =>
                                   handleEditVariant(product, variant)
                                 }

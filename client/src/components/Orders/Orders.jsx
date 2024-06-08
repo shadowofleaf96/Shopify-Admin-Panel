@@ -27,6 +27,7 @@ function Orders() {
   const [orderToDelete, setorderToDelete] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const itemsPerPage = 5;
+
   const fetchOrders = async () => {
     setLoading(true);
     try {
@@ -156,13 +157,13 @@ function Orders() {
   if (loading) {
     return (
       <div className="flex justify-center items-center min-h-screen">
-        <FaSpinner size={40} className="animate-spin text-gray-500" />
+        <FaSpinner size={40} className="animate-spin text-blue-500" />
       </div>
     );
   }
 
   if (error) {
-    return <div>Error: {error.message}</div>;
+    return <div className="flex justify-center items-center min-h-screen text-lg">Error: {error.message}</div>;
   }
 
   const indexOfLastItem = currentPage * itemsPerPage;
@@ -181,6 +182,8 @@ function Orders() {
       setCurrentPage(currentPage + 1);
     }
   };
+
+  console.log(orders)
 
   return (
     <section className="container px-4 mx-auto mt-8">
@@ -262,28 +265,28 @@ function Orders() {
                 <th
                   scope="col"
                   className="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 cursor-pointer"
-                  onClick={() => handleSort("role")}
+                  onClick={() => handleSort("city")}
                 >
-                  Shipping Address{" "}
-                  {sortConfig.key === "role" &&
+                  Shipping Address
+                  {sortConfig.key === "city" &&
                     (sortConfig.direction === "ascending" ? " ▲" : " ▼")}
                 </th>
                 <th
                   scope="col"
                   className="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 cursor-pointer"
-                  onClick={() => handleSort("status")}
+                  onClick={() => handleSort("price")}
                 >
-                  City
-                  {sortConfig.key === "status" &&
+                  Price
+                  {sortConfig.key === "price" &&
                     (sortConfig.direction === "ascending" ? " ▲" : " ▼")}
                 </th>
                 <th
                   scope="col"
                   className="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 cursor-pointer"
-                  onClick={() => handleSort("status")}
+                  onClick={() => handleSort("fulfillement")}
                 >
-                  Price{" "}
-                  {sortConfig.key === "status" &&
+                  Fulfillement{" "}
+                  {sortConfig.key === "fulfillement" &&
                     (sortConfig.direction === "ascending" ? " ▲" : " ▼")}
                 </th>
                 <th
@@ -325,19 +328,19 @@ function Orders() {
                     {order.phone}
                   </td>
                   <td className="px-4 py-4 text-sm text-gray-800 whitespace-nowrap">
-                    {`${order.shipping_address.address1} ${order.shipping_address.address2}`}
-                  </td>
-                  <td className="px-4 py-4 text-sm text-gray-800 whitespace-nowrap">
-                    {order.shipping_address.city}
+                    {`${order.shipping_address.address1} ${order.shipping_address.address2} ${order.shipping_address.city}`}
                   </td>
                   <td className="px-4 py-4 text-sm text-gray-800 whitespace-nowrap">
                     {order.total_price} DH
+                  </td>
+                  <td className="px-4 py-4 text-sm text-gray-800 whitespace-nowrap">
+                    {order.fulfillment_status}
                   </td>
                   <td className="px-4 py-4 text-sm whitespace-nowrap">
                     <div className="flex items-center gap-x-6">
                       <div className="h-auto w-auto">
                         <button
-                          className="text-gray-800 transition-colors duration-200 hover:text-red-500 focus:outline-none"
+                          className="text-red-600 transition-colors duration-200 hover:text-red-500 focus:outline-none"
                           onClick={() => openModal(order.id)}
                         >
                           <FaRegTrashCan size={22} />
@@ -346,7 +349,7 @@ function Orders() {
                       <div className="h-auto w-auto">
                         <button
                           onClick={() => handleEditOrder(order)}
-                          className="text-gray-800 transition-colors duration-200 hover:text-yellow-500 focus:outline-none"
+                          className="text-blue-500 transition-colors duration-200 hover:text-yellow-500 focus:outline-none"
                         >
                           <FaRegEdit size={22} />
                         </button>

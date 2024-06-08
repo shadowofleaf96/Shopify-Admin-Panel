@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Bar, Line } from "react-chartjs-2";
-import 'chart.js/auto';
+import "chart.js/auto";
 import axios from "axios";
 import { FaSpinner } from "react-icons/fa6";
 import { BsCart, BsCartCheck, BsCartX, BsCartPlus } from "react-icons/bs";
@@ -15,6 +15,7 @@ const Dashboard = () => {
     totalOrders: 0,
   });
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -23,24 +24,38 @@ const Dashboard = () => {
         const orders = ordersResponse.data.orders;
         setOrdersData(orders);
 
-        const fulfilledOrders = orders.filter(
-          (order) => order.fulfillment_status === "fulfilled"
-        );
+        const fulfilledOrders = orders.filter(order => order.fulfillment_status === "fulfilled");
+
+        // Aggregate sales by month
         const salesByMonth = fulfilledOrders.reduce((acc, order) => {
-          const month = new Date(order.created_at).toLocaleString("default", {
-            month: "long",
-          });
+          const date = new Date(order.created_at);
+          const month = date.toLocaleString("default", { month: "long", year: "numeric" });
           if (!acc[month]) acc[month] = 0;
           acc[month] += parseFloat(order.total_price);
           return acc;
         }, {});
 
-        const salesDataArray = Object.keys(salesByMonth).map((month) => ({
+        const salesDataArray = Object.keys(salesByMonth).map(month => ({
           month,
           amount: salesByMonth[month],
         }));
 
         setSalesData(salesDataArray);
+
+        // Aggregate orders by date
+        const ordersByDate = orders.reduce((acc, order) => {
+          const date = new Date(order.created_at).toISOString().split("T")[0]; // YYYY-MM-DD format
+          if (!acc[date]) acc[date] = 0;
+          acc[date] += parseFloat(order.total_price);
+          return acc;
+        }, {});
+
+        const ordersDataArray = Object.keys(ordersByDate).map(date => ({
+          date: new Date(date).toLocaleDateString("default", { day: "2-digit", month: "short", year: "numeric" }), // DD MMM YYYY format
+          amount: ordersByDate[date],
+        }));
+
+        setOrdersData(ordersDataArray);
 
         const productsResponse = await axios.get("http://localhost:3000/api/products");
         const products = productsResponse.data.products;
@@ -48,10 +63,8 @@ const Dashboard = () => {
         let inStock = 0;
         let outOfStock = 0;
 
-        products.forEach((product) => {
-          const hasInStockVariant = product.variants.some(
-            (variant) => variant.inventory_quantity > 0
-          );
+        products.forEach(product => {
+          const hasInStockVariant = product.variants.some(variant => variant.inventory_quantity > 0);
           if (hasInStockVariant) {
             inStock++;
           } else {
@@ -65,9 +78,11 @@ const Dashboard = () => {
           outOfStock,
           totalOrders: orders.length,
         });
+
+        setLoading(false);
       } catch (error) {
         console.error("Error fetching data:", error);
-      } finally {
+        setError(error);
         setLoading(false);
       }
     };
@@ -76,24 +91,22 @@ const Dashboard = () => {
   }, []);
 
   const barData = {
-    labels: salesData.map((sale) => sale.month),
+    labels: salesData.map(sale => sale.month),
     datasets: [
       {
         label: "Sales",
-        data: salesData.map((sale) => sale.amount),
+        data: salesData.map(sale => sale.amount),
         backgroundColor: "rgba(75, 192, 192, 0.5)",
       },
     ],
   };
 
   const lineData = {
-    labels: ordersData.map((order) =>
-      new Date(order.created_at).toLocaleString("default", { month: "long" })
-    ),
+    labels: ordersData.map(order => order.date),
     datasets: [
       {
         label: "Orders",
-        data: ordersData.map((order) => parseFloat(order.total_price)),
+        data: ordersData.map(order => order.amount),
         fill: true,
         backgroundColor: "rgba(153, 102, 255, 0.2)",
         borderColor: "rgba(153, 102, 255, 1)",
@@ -101,11 +114,18 @@ const Dashboard = () => {
     ],
   };
 
-
   if (loading) {
     return (
       <div className="flex justify-center items-center min-h-screen">
-        <FaSpinner size={40} className="animate-spin text-gray-500" />
+        <FaSpinner size={40} className="animate-spin text-blue-500" />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex justify-center items-center min-h-screen text-lg">
+        Error: {error.message}
       </div>
     );
   }
@@ -132,7 +152,9 @@ const Dashboard = () => {
           <div className="bg-white p-4 rounded-lg shadow-md flex hover:scale-105 transform transition duration-300 cursor-pointer">
             <div className="flex flex-col mr-4">
               <h3 className="text-lg font-medium mb-2">Product Out of Stock</h3>
-              <p className="text-2xl font-semibold">{productsInfo.outOfStock}</p>
+              <p className="text-2xl font-semibold">
+                {productsInfo.outOfStock}
+              </p>
             </div>
             <BsCartX size={40} className="ml-auto my-auto" />
           </div>
