@@ -50,7 +50,7 @@ function Navbar() {
 
   return (
     <>
-      <header className="flex flex-wrap sm:justify-start sm:flex-nowrap z-50 bg-white border-b text-sm py-2.5 sm:py-4">
+      <header className="flex flex-wrap sm:justify-start sm:flex-nowrap z-50 bg-white border-b text-sm py-2 sm:py-4">
         <nav
           className="max-w-7xl flex basis-full items-center w-full mx-auto px-4 sm:px-6 lg:px-8"
           aria-label="Global"
