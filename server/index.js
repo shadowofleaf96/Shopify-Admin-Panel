@@ -14,7 +14,7 @@ const app = express();
 connectDB();
 
 const port = process.env.PORT || 3000;
-const allowedOrigins = ["http://localhost:4173", "http://localhost:5173", "https://shopify-admin-panel.onrender.com/login"];
+const allowedOrigins = ["http://localhost:4173", "http://localhost:5173", "https://shopify-admin-panel.onrender.com"];
 const corsOptions = {
   origin: function (origin, callback) {
     if (allowedOrigins.indexOf(origin) !== -1 || !origin) {
