@@ -7,9 +7,9 @@ const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
 function EditVariantForm({ onClose, refreshVariants, initialData, isEditMode, product }) {
   const [formData, setFormData] = useState({
+    sku: "",
     option1: "",
     price: "",
-    sku: "",
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -18,9 +18,9 @@ function EditVariantForm({ onClose, refreshVariants, initialData, isEditMode, pr
   useEffect(() => {
     if (initialData) {
       setFormData({
+        sku: initialData.sku || "",
         option1: initialData.option1 || "",
         price: initialData.price || "",
-        sku: initialData.sku || "",
       });
     }
   }, [initialData]);
@@ -38,9 +38,9 @@ function EditVariantForm({ onClose, refreshVariants, initialData, isEditMode, pr
     setIsSubmitting(true);
 
     const variantData = {
+      sku: formData.sku,
       option1: formData.option1,
       price: formData.price,
-      sku: formData.sku,
     };
 
     try {
@@ -53,14 +53,14 @@ function EditVariantForm({ onClose, refreshVariants, initialData, isEditMode, pr
       }
 
       setFormData({
+        sku: "",
         option1: "",
         price: "",
-        sku: "",
       });
       refreshVariants();
       onClose();
     } catch (error) {
-      console.error('Error:', error);  // Log any error
+      console.error('Error:', error);
       toast.error("An error occurred. Please try again.");
     } finally {
       setIsSubmitting(false);
@@ -72,6 +72,21 @@ function EditVariantForm({ onClose, refreshVariants, initialData, isEditMode, pr
       <h2 className="text-lg font-semibold text-gray-800 mb-4">
         {isEditMode ? "Edit Variant" : "Add Variant"}
       </h2>
+      <div className="mb-4">
+        <label htmlFor="sku" className="block mb-2">
+          SKU
+        </label>
+        <input
+          type="text"
+          id="sku"
+          name="sku"
+          placeholder="Variant SKU"
+          value={formData.sku}
+          onChange={handleChange}
+          required
+          className="border bg-white border-gray-300 p-2 rounded w-full"
+        />
+      </div>
       <div className="mb-4">
         <label htmlFor="option1" className="block mb-2">
           Title
@@ -97,21 +112,6 @@ function EditVariantForm({ onClose, refreshVariants, initialData, isEditMode, pr
           name="price"
           placeholder="Variant Price"
           value={formData.price}
-          onChange={handleChange}
-          required
-          className="border bg-white border-gray-300 p-2 rounded w-full"
-        />
-      </div>
-      <div className="mb-4">
-        <label htmlFor="sku" className="block mb-2">
-          SKU
-        </label>
-        <input
-          type="text"
-          id="sku"
-          name="sku"
-          placeholder="Variant SKU"
-          value={formData.sku}
           onChange={handleChange}
           required
           className="border bg-white border-gray-300 p-2 rounded w-full"

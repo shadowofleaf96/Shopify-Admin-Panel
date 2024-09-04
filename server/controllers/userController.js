@@ -7,18 +7,20 @@ exports.createUser = async (req, res) => {
     const { username, password, email, role, status } = req.body;
     const avatar = req.file ? req.file.path : null;
     const existingUser = await User.findOne({ email });
-    if (existingUser)
+    if (existingUser) {
       return res.status(400).json({
         status: "failed",
         message: "It seems you already have an account, please log in instead.",
       });
+    }
+
     const newUser = new User({
-      username: username,
+      username,
       password: password,
-      email: email,
-      role: role,
-      status: status,
-      avatar: avatar,
+      email,
+      role,
+      status,
+      avatar,
     });
     await newUser.save();
     res.status(200).json({
@@ -32,7 +34,6 @@ exports.createUser = async (req, res) => {
       message: "Internal Server Error",
     });
   }
-  res.end();
 };
 
 exports.login = async (req, res) => {
@@ -56,6 +57,7 @@ exports.login = async (req, res) => {
           "This account is inactive, please try again later or use an active account instead",
       });
     }
+
     const isPasswordValid = await bcrypt.compare(password, user.password);
 
     if (!isPasswordValid) {
@@ -68,17 +70,20 @@ exports.login = async (req, res) => {
 
     const token = user.generateAccessJWT();
 
+    // dont forgot about enabling httpOnly and secure in production
+
     res.cookie("SessionID", token, {
-      maxAge: 30 * 24 * 60 * 60 * 1000,
+      maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
       httpOnly: false,
       secure: process.env.NODE_ENV === "production",
       sameSite: "Strict",
     });
+
     const { password: _, ...user_data } = user._doc;
 
     res.status(200).json({
       status: "success",
-      // data: user_data, let it here, it can be used in the future
+      data: user_data,
       message: "You have successfully logged in.",
     });
   } catch (err) {
@@ -87,7 +92,6 @@ exports.login = async (req, res) => {
       message: "Internal Server Error",
     });
   }
-  res.end();
 };
 
 exports.getAllUsers = async (req, res) => {
@@ -95,7 +99,7 @@ exports.getAllUsers = async (req, res) => {
     const users = await User.find();
     res.status(200).json({
       status: "success",
-      users: users,
+      users,
     });
   } catch (err) {
     res.status(500).json({
@@ -103,7 +107,6 @@ exports.getAllUsers = async (req, res) => {
       message: "Internal Server Error",
     });
   }
-  res.end();
 };
 
 exports.getUserInfo = async (req, res) => {
@@ -111,7 +114,7 @@ exports.getUserInfo = async (req, res) => {
     const { id } = req.params;
     const existingUser = await User.findById(id);
     if (!existingUser) {
-      res.status(500).json({
+      res.status(404).json({
         status: "failed",
         message: "User not found",
       });
@@ -127,7 +130,6 @@ exports.getUserInfo = async (req, res) => {
       message: "Internal Server Error",
     });
   }
-  res.end();
 };
 
 exports.profile = async (req, res) => {
@@ -135,7 +137,7 @@ exports.profile = async (req, res) => {
     const user = req.user;
     res.status(200).json({
       status: "success",
-      user: user,
+      user,
     });
   } catch (err) {
     res.status(500).json({
@@ -210,14 +212,14 @@ exports.deleteUser = async (req, res) => {
     const { id } = req.params;
     const existingUser = await User.findByIdAndDelete(id);
     if (!existingUser) {
-      res.status(500).json({
+      res.status(404).json({
         status: "failed",
         message: "User not found",
       });
     } else {
       res.status(200).json({
         status: "success",
-        message: "this user is deleted successfully",
+        message: "This user is deleted successfully",
       });
     }
   } catch (err) {
@@ -226,7 +228,6 @@ exports.deleteUser = async (req, res) => {
       message: "Internal Server Error",
     });
   }
-  res.end();
 };
 
 exports.logout = async (req, res) => {
@@ -274,5 +275,4 @@ exports.logout = async (req, res) => {
       message: "Internal Server Error",
     });
   }
-  res.end();
 };

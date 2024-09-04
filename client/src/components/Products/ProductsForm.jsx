@@ -25,8 +25,8 @@ function EditProductForm({ onClose, refreshProducts, initialData, isEditMode }) 
         body_html: initialData.body_html || "",
         vendor: initialData.vendor || "",
         product_type: initialData.product_type || "",
-        tags: initialData.tags ? initialData.tags.join(", ") : "",
-        status: initialData.status || "active", 
+        tags: initialData.tags || "",
+        status: initialData.status || "active",
       });
     }
   }, [initialData]);

@@ -2,8 +2,9 @@ import React, { useEffect, useState } from "react";
 import { Bar, Line } from "react-chartjs-2";
 import "chart.js/auto";
 import axios from "axios";
+import Error from "../Error/Error"
 import { FaSpinner } from "react-icons/fa6";
-import { BsCart, BsCartCheck, BsCartX, BsCartPlus } from "react-icons/bs";
+import { BsCartFill, BsCartCheckFill, BsCartXFill, BsCartPlusFill } from "react-icons/bs";
 
 const Dashboard = () => {
   const [salesData, setSalesData] = useState([]);
@@ -26,7 +27,6 @@ const Dashboard = () => {
 
         const fulfilledOrders = orders.filter(order => order.fulfillment_status === "fulfilled");
 
-        // Aggregate sales by month
         const salesByMonth = fulfilledOrders.reduce((acc, order) => {
           const date = new Date(order.created_at);
           const month = date.toLocaleString("default", { month: "long", year: "numeric" });
@@ -42,16 +42,15 @@ const Dashboard = () => {
 
         setSalesData(salesDataArray);
 
-        // Aggregate orders by date
         const ordersByDate = orders.reduce((acc, order) => {
-          const date = new Date(order.created_at).toISOString().split("T")[0]; // YYYY-MM-DD format
+          const date = new Date(order.created_at).toISOString().split("T")[0];
           if (!acc[date]) acc[date] = 0;
           acc[date] += parseFloat(order.total_price);
           return acc;
         }, {});
 
         const ordersDataArray = Object.keys(ordersByDate).map(date => ({
-          date: new Date(date).toLocaleDateString("default", { day: "2-digit", month: "short", year: "numeric" }), // DD MMM YYYY format
+          date: new Date(date).toLocaleDateString("default", { day: "2-digit", month: "short", year: "numeric" }),
           amount: ordersByDate[date],
         }));
 
@@ -124,10 +123,8 @@ const Dashboard = () => {
 
   if (error) {
     return (
-      <div className="flex justify-center items-center min-h-screen text-lg">
-        Error: {error.message}
-      </div>
-    );
+      <Error error={error} />
+    )
   }
 
   return (
@@ -140,14 +137,18 @@ const Dashboard = () => {
               <h3 className="text-lg font-medium mb-2">Total Products</h3>
               <p className="text-2xl font-semibold">{productsInfo.total}</p>
             </div>
-            <BsCart size={44} className="ml-auto my-auto" />
+            <div className="h-auto w-auto ml-auto my-auto">
+              <BsCartFill size={44} className="text-blue-500" />
+            </div>
           </div>
           <div className="bg-white p-4 rounded-lg shadow-md flex hover:scale-105 transform transition duration-300 cursor-pointer">
             <div className="flex flex-col mr-4">
               <h3 className="text-lg font-medium mb-2">Product In Stock</h3>
               <p className="text-2xl font-semibold">{productsInfo.inStock}</p>
             </div>
-            <BsCartPlus size={40} className="ml-auto my-auto" />
+            <div className="h-auto w-auto ml-auto my-auto">
+              <BsCartPlusFill size={40} className="text-blue-500" />
+            </div>
           </div>
           <div className="bg-white p-4 rounded-lg shadow-md flex hover:scale-105 transform transition duration-300 cursor-pointer">
             <div className="flex flex-col mr-4">
@@ -156,14 +157,18 @@ const Dashboard = () => {
                 {productsInfo.outOfStock}
               </p>
             </div>
-            <BsCartX size={40} className="ml-auto my-auto" />
+            <div className="h-auto w-auto ml-auto my-auto">
+              <BsCartXFill size={40} className="text-blue-500" />
+            </div>
           </div>
           <div className="bg-white p-4 rounded-lg shadow-md flex hover:scale-105 transform transition duration-300 cursor-pointer">
             <div className="flex flex-col mr-4">
               <h3 className="text-lg font-medium mb-2">Total Orders</h3>
               <p className="text-2xl font-semibold">{productsInfo.totalOrders}</p>
             </div>
-            <BsCartCheck size={40} className="ml-auto my-auto" />
+            <div className="h-auto w-auto ml-auto my-auto">
+              <BsCartCheckFill size={40} className="text-blue-500" />
+            </div>
           </div>
         </div>
       </div>

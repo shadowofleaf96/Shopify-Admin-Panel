@@ -2,11 +2,15 @@ import React, { useEffect, useState, useContext } from "react";
 import { FaRegTrashCan } from "react-icons/fa6";
 import { FaRegEdit, FaTimes } from "react-icons/fa";
 import { FaSpinner } from "react-icons/fa6";
+import { TbShoppingBagEdit } from "react-icons/tb";
 import { FaPlus } from "react-icons/fa6";
-import { FaChevronDown } from "react-icons/fa";
+import { FaChevronDown, FaFileCsv } from "react-icons/fa";
 import EditProductForm from "../Products/ProductsForm";
 import EditVariantForm from "../Products/VariantsForm";
+import { IoIosMore } from "react-icons/io";
 import { toast } from "react-toastify";
+import Error from "../Error/Error"
+import ExportToCSV from "../Utils/ExportToCsv"
 import axios from "axios";
 import ConfirmationModal from "../Utils/ConfirmationModal";
 
@@ -18,6 +22,8 @@ function Products() {
   const [expandedProductIds, setExpandedProductIds] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [quantity, setQuantity] = useState(0);
+  const [selectedInventoryItemId, setSelectedInventoryItemId] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [sortConfig, setSortConfig] = useState({
     key: null,
@@ -31,6 +37,9 @@ function Products() {
   const [productToDelete, setProductToDelete] = useState(null);
   const [variantToDelete, setVariantToDelete] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
+  const [isVariantOpen, setIsVariantOpen] = useState(false);
+  const [showQuantitySection, setShowQuantitySection] = useState(false);
   const [showEditVariantModal, setShowEditVariantModal] = useState(false);
   const [editingVariant, setEditingVariant] = useState(null);
   const [editingProductForVariant, setEditingProductForVariant] =
@@ -211,6 +220,41 @@ function Products() {
     }
   };
 
+  const handleSetQuantity = async () => {
+    try {
+      setIsLoading(true);
+      const locationsResponse = await axios.get(`${backendUrl}api/products/getlocations`);
+      const locations = locationsResponse.data.body.locations;
+
+      let foundLocationId = null;
+
+      for (const location of locations) {
+        const locationId = location.id;
+        const levelsResponse = await axios.get(`${backendUrl}api/products/getlevels/${locationId}`);
+        const levels = levelsResponse.data.inventory_levels;
+
+        if (levels.some(level => level.inventory_item_id === selectedInventoryItemId)) {
+          foundLocationId = locationId;
+          break;
+        }
+      }
+
+      const response = await axios.post(backendUrl + "api/products/setlevels", {
+        location_id: foundLocationId,
+        inventory_item_id: selectedInventoryItemId,
+        available: quantity,
+      });
+
+      toast.success(response.data.message);
+      setIsLoading(false);
+      setShowQuantitySection(false);
+      fetchProducts();
+    } catch (e) {
+      setIsLoading(false);
+      toast.error(e.response.data.message);
+    }
+  };
+
   const getNestedValue = (obj, path) => {
     return path
       .split(".")
@@ -265,7 +309,9 @@ function Products() {
   }
 
   if (error) {
-    return <div className="flex justify-center items-center min-h-screen text-lg">Error: {error.message}</div>;
+    return (
+      <Error error={error} />
+    )
   }
 
   const indexOfLastItem = currentPage * itemsPerPage;
@@ -298,6 +344,12 @@ function Products() {
           </button>
         )}
         <button
+          onClick={() => ExportToCSV(products, ("Products-" + new Date().toLocaleDateString()))}
+          className="flex items-center justify-center h-12 w-12 px-2 text-white bg-blue-400 rounded-full hover:bg-blue-500 focus:outline-none"
+        >
+          <FaFileCsv size={28} />
+        </button>
+        <button
           onClick={handleAddProduct}
           className="flex items-center justify-center h-12 w-12 px-2 text-white bg-blue-400 rounded-full hover:bg-blue-500 focus:outline-none"
         >
@@ -329,7 +381,7 @@ function Products() {
           </div>
         </div>
       )}
-      <div className="mt-6 flex flex-col">
+      <div className="mt-2 flex flex-col max-h-[60vh] overflow-auto">
         <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
@@ -445,7 +497,7 @@ function Products() {
                           alt={product.image?.alt}
                         />
                         <div>
-                          <h2 className="font-medium text-gray-800">
+                          <h2 className="font-medium text-gray-800 truncate">
                             {product.title}
                           </h2>
                           {/* <p className="text-sm font-normal text-gray-800">
@@ -470,25 +522,22 @@ function Products() {
                     </td>
                     <td className="px-4 py-4 text-sm font-medium text-gray-800 whitespace-nowrap">
                       <div
-                        className={`inline-flex items-center px-3 py-1 rounded-full gap-x-2 ${
-                          product.status === "active"
-                            ? "bg-emerald-100/60"
-                            : "bg-red-100/60"
-                        }`}
+                        className={`inline-flex items-center px-3 py-1 rounded-full gap-x-2 ${product.status === "active"
+                          ? "bg-emerald-100/60"
+                          : "bg-red-100/60"
+                          }`}
                       >
                         <span
-                          className={`h-1.5 w-1.5 rounded-full ${
-                            product.status === "active"
-                              ? "bg-emerald-500"
-                              : "bg-red-500"
-                          }`}
+                          className={`h-1.5 w-1.5 rounded-full ${product.status === "active"
+                            ? "bg-emerald-500"
+                            : "bg-red-500"
+                            }`}
                         ></span>
                         <span
-                          className={`text-sm font-normal ${
-                            product.status === "active"
-                              ? "text-emerald-500"
-                              : "text-red-500"
-                          }`}
+                          className={`text-sm font-normal ${product.status === "active"
+                            ? "text-emerald-500"
+                            : "text-red-500"
+                            }`}
                         >
                           {product.status.charAt(0).toUpperCase() +
                             product.status.slice(1)}
@@ -496,31 +545,64 @@ function Products() {
                       </div>
                     </td>
                     <td className="px-4 py-4 text-sm whitespace-nowrap">
-                      <div className="flex items-center gap-x-6">
-                        <div className="h-auto w-auto">
-                          <button
-                            className="text-gray-500 transition-colors duration-200 hover:text-green-500 focus:outline-none"
-                            onClick={() => handleAddVariant(product)}
-                          >
-                            <FaPlus size={18} />
-                          </button>
-                        </div>
-                        <div className="h-auto w-auto">
-                          <button
-                            className="text-red-600 transition-colors duration-200 hover:text-red-500 focus:outline-none"
-                            onClick={() => openModal(product.id)}
-                          >
-                            <FaRegTrashCan size={22} />
-                          </button>
-                        </div>
-                        <div className="h-auto w-auto">
-                          <button
-                            onClick={() => handleEditProduct(product)}
-                            className="text-blue-500 transition-colors duration-200 hover:text-yellow-500 focus:outline-none"
-                          >
-                            <FaRegEdit size={22} />
-                          </button>
-                        </div>
+                      <div className="relative">
+                        <button
+                          className="text-gray-500 transition-colors duration-200 hover:text-blue-500 focus:outline-none"
+                          onClick={() => setIsOpen(isOpen === product.id ? null : product.id)}
+                        >
+                          <div className="rounded-full border-2 hover:text-blue-500 focus:outline-none border-gray-300">
+                            <IoIosMore size={28} />
+                          </div>
+                        </button>
+                        {isOpen === product.id && (
+                          <div className="absolute right-0 mt-2 w-40 bg-white border border-gray-200 rounded-md shadow-lg z-10">
+                            {product.variants.length === 1 && (
+                              <button
+                                className="flex items-center w-full px-4 py-2 text-gray-500 hover:bg-gray-100"
+                                onClick={() => {
+                                  setSelectedInventoryItemId(product.variants[0].inventory_item_id);
+                                  setQuantity(product.variants[0].inventory_quantity);
+                                  setShowQuantitySection(true)
+                                  setIsVariantOpen(null);
+                                }}
+                              >
+                                <TbShoppingBagEdit size={22} className="mr-2 text-yellow-500 hover:bg-gray-100" />
+                                Set Quantity
+                              </button>
+                            )
+                            }
+                            <button
+                              className="flex items-center w-full px-4 py-2 text-gray-500 hover:bg-gray-100"
+                              onClick={() => {
+                                handleAddVariant(product);
+                                setIsOpen(null);
+                              }}
+                            >
+                              <FaPlus size={18} className="mr-2 text-yellow-500 hover:bg-gray-100" />
+                              Add Variant
+                            </button>
+                            <button
+                              className="flex items-center w-full px-4 py-2 text-gray-500 hover:bg-gray-100"
+                              onClick={() => {
+                                handleEditProduct(product);
+                                setIsOpen(null);
+                              }}
+                            >
+                              <FaRegEdit size={18} className="mr-2 text-blue-500 hover:bg-gray-100" />
+                              Edit
+                            </button>
+                            <button
+                              className="flex items-center w-full px-4 py-2 text-gray-500 hover:bg-gray-100"
+                              onClick={() => {
+                                openModal(product.id);
+                                setIsOpen(null);
+                              }}
+                            >
+                              <FaRegTrashCan size={18} className="mr-2 text-red-600 hover:bg-gray-100" />
+                              Delete
+                            </button>
+                          </div>
+                        )}
                       </div>
                     </td>
                   </tr>
@@ -532,7 +614,6 @@ function Products() {
                       >
                         <td className="px-4 py-4 text-sm text-gray-700 whitespace-nowrap"></td>
                         <td className="px-4 py-4 text-sm text-gray-800 whitespace-nowrap">
-                          {/* Name */}
                           <div>
                             <span className="font-medium">
                               {variant.title}
@@ -540,45 +621,63 @@ function Products() {
                           </div>
                         </td>
                         <td className="px-4 py-4 text-sm text-gray-800 whitespace-nowrap">
-                          {/* Category (Leave Empty) */}
                         </td>
                         <td className="px-4 py-4 text-sm text-gray-800 whitespace-nowrap">
-                          {/* Price */}
                           {variant.price}
                         </td>
                         <td className="px-4 py-4 text-sm text-gray-800 whitespace-nowrap">
-                          {/* Inventory Stock */}
                           {variant.inventory_quantity}
                         </td>
                         <td className="px-4 py-4 text-sm font-medium text-gray-800 whitespace-nowrap">
-                          {/* Status (Leave Empty) */}
                         </td>
                         <td className="px-4 py-4 text-sm font-medium text-gray-800 whitespace-nowrap">
-                          {/* Status (Leave Empty) */}
                         </td>
                         <td className="px-4 py-4 text-sm whitespace-nowrap">
-                          {/* Edit and Delete Buttons */}
-                          <div className="flex items-center gap-x-6">
-                            <div className="h-auto w-auto flex justify-center items-center">
-                              <button
-                                className="text-red-600 transition-colors duration-200 hover:text-red-500 focus:outline-none"
-                                onClick={() =>
-                                  openVariantModal(product.id, variant.id)
-                                }
-                              >
-                                <FaRegTrashCan size={18} />
-                              </button>
-                            </div>
-                            <div className="h-auto w-auto flex justify-center items-center">
-                              <button
-                                className="text-blue-500 transition-colors duration-200 hover:text-yellow-500 focus:outline-none"
-                                onClick={() =>
-                                  handleEditVariant(product, variant)
-                                }
-                              >
-                                <FaRegEdit size={18} />
-                              </button>
-                            </div>
+                          <div className="relative">
+                            <button
+                              className="text-gray-500 transition-colors duration-200 hover:text-blue-500 focus:outline-none"
+                              onClick={() => setIsVariantOpen(isVariantOpen === variant.id ? null : variant.id)}
+                            >
+                              <div className="rounded-full border-2 hover:text-blue-500 focus:outline-none border-gray-300">
+                                <IoIosMore size={22} />
+                              </div>
+                            </button>
+                            {isVariantOpen === variant.id && (
+                              <div className="absolute right-0 mt-2 w-40 bg-white border border-gray-200 rounded-md shadow-lg z-10">
+                                <button
+                                  className="flex items-center w-full px-4 py-2 text-yellow-500 hover:bg-gray-100"
+                                  onClick={() => {
+                                    setSelectedInventoryItemId(variant.inventory_item_id);
+                                    setQuantity(variant.inventory_quantity);
+                                    setShowQuantitySection(true)
+                                    setIsVariantOpen(null);
+                                  }}
+                                >
+                                  <TbShoppingBagEdit size={22} className="mr-2" />
+                                  Set Quantity
+                                </button>
+                                <button
+                                  className="flex items-center w-full px-4 py-2 text-blue-500 hover:bg-gray-100"
+                                  onClick={() => {
+                                    handleEditVariant(product, variant);
+                                    setIsVariantOpen(null);
+                                  }}
+                                >
+                                  <FaRegEdit size={18} className="mr-2" />
+                                  Edit
+                                </button>
+                                <button
+                                  className="flex items-center w-full px-4 py-2 text-red-600 hover:bg-gray-100"
+                                  onClick={() => {
+                                    openVariantModal(product.id, variant.id);
+                                    setIsVariantOpen(null);
+                                  }}
+                                >
+                                  <FaRegTrashCan size={18} className="mr-2" />
+                                  Delete
+                                </button>
+                              </div>
+                            )}
                           </div>
                         </td>
                       </tr>
@@ -592,9 +691,8 @@ function Products() {
       <div className="flex items-center justify-between mt-6">
         <button
           onClick={handlePreviousPage}
-          className={`flex items-center px-5 py-2 text-sm text-gray-700 capitalize transition-colors duration-200 bg-white bproduct rounded-md gap-x-2 hover:bg-gray-100 ${
-            currentPage === 1 ? "opacity-50 cursor-not-allowed" : ""
-          }`}
+          className={`flex items-center px-5 py-2 text-sm text-gray-700 capitalize transition-colors duration-200 bg-white bproduct rounded-md gap-x-2 hover:bg-gray-100 ${currentPage === 1 ? "opacity-50 cursor-not-allowed" : ""
+            }`}
           disabled={currentPage === 1}
         >
           <svg
@@ -618,11 +716,10 @@ function Products() {
             <button
               key={index + 1}
               onClick={() => setCurrentPage(index + 1)}
-              className={`px-2 py-1 text-sm rounded-md ${
-                currentPage === index + 1
-                  ? "text-blue-500 bg-blue-100"
-                  : "text-gray-500 hover:bg-gray-100"
-              }`}
+              className={`px-2 py-1 text-sm rounded-md ${currentPage === index + 1
+                ? "text-blue-500 bg-blue-100"
+                : "text-gray-500 hover:bg-gray-100"
+                }`}
             >
               {index + 1}
             </button>
@@ -630,9 +727,8 @@ function Products() {
         </div>
         <button
           onClick={handleNextPage}
-          className={`flex items-center px-5 py-2 text-sm text-gray-700 capitalize transition-colors duration-200 bg-white bproduct rounded-md gap-x-2 hover:bg-gray-100 ${
-            currentPage === totalPages ? "opacity-50 cursor-not-allowed" : ""
-          }`}
+          className={`flex items-center px-5 py-2 text-sm text-gray-700 capitalize transition-colors duration-200 bg-white bproduct rounded-md gap-x-2 hover:bg-gray-100 ${currentPage === totalPages ? "opacity-50 cursor-not-allowed" : ""
+            }`}
           disabled={currentPage === totalPages}
         >
           <span>Next</span>
@@ -652,6 +748,37 @@ function Products() {
           </svg>
         </button>
       </div>
+      {showQuantitySection && (
+        <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
+          <div className="bg-white rounded p-6 w-1/3">
+            <h3 className="text-lg font-medium">Set Inventory Quantity</h3>
+            <div className="flex gap-x-2 mt-4">
+              <input
+                type="number"
+                value={quantity}
+                onChange={(e) => setQuantity(e.target.value)}
+                placeholder="Enter quantity"
+                className="border bg-white border-gray-300 rounded px-2 py-1 w-full"
+              />
+            </div>
+            <div className="flex justify-between mt-4">
+              <button
+                onClick={() => setShowQuantitySection(false)}
+                className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
+              >
+                Close
+              </button>
+              <button
+                onClick={handleSetQuantity}
+                className="px-4 py-2 bg-blue-500 text-white rounded"
+                disabled={isLoading}
+              >
+                {isLoading ? <FaSpinner className="animate-spin" /> : "Set Quantity"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
       <ConfirmationModal
         isOpen={modalIsOpen}
         onRequestClose={closeModal}
@@ -659,13 +786,13 @@ function Products() {
           isBulkDelete
             ? handleConfirmBulkDelete
             : isVariantDelete
-            ? handleDeleteVariant
-            : handleDeleteProduct
+              ? handleDeleteVariant
+              : handleDeleteProduct
         }
         isLoading={isLoading}
         isBulkDelete={isBulkDelete}
       />
-    </section>
+    </section >
   );
 }
 

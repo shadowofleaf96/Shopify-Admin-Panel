@@ -1,6 +1,6 @@
 import React from "react";
 import { FaBoxOpen, FaHome, FaUser } from "react-icons/fa";
-import { FaCartShopping } from "react-icons/fa6";
+import { FaCartShopping, FaWarehouse } from "react-icons/fa6";
 import { Link, useLocation } from "react-router-dom";
 
 function Sidebar() {
@@ -12,25 +12,25 @@ function Sidebar() {
       name: "Dashboard",
       href: `/`,
       current: pathname === `/`,
-      icon: <FaHome size={24} className="text-blue-500" />,
+      icon: <FaHome size={24}/>,
     },
     {
       name: "Users",
       href: `/users/`,
       current: pathname === `/users/`,
-      icon: <FaUser size={24} className="text-blue-500" />,
+      icon: <FaUser size={23}/>,
     },
     {
       name: "Products",
       href: `/products/`,
       current: pathname === `/products/`,
-      icon: <FaBoxOpen size={24} className="text-blue-500" />,
+      icon: <FaBoxOpen size={24}/>,
     },
     {
       name: "Orders",
       href: `/orders/`,
       current: pathname === `/orders/`,
-      icon: <FaCartShopping size={24} className="text-blue-500" />,
+      icon: <FaCartShopping size={24}/>,
     },
   ];
 
@@ -42,12 +42,13 @@ function Sidebar() {
             {SideElements.map((item) => (
               <Link
                 key={item.name}
-                className={`flex items-center px-3 py-2 text-gray-700 transition-colors duration-300 transform rounded-lg hover:bg-gray-100 hover:text-gray-700 ${
-                  item.current ? "bg-gray-100 text-gray-700" : ""
-                }`}
+                className={`flex items-center px-3 py-2 text-gray-700 transition-colors duration-300 transform rounded-lg hover:bg-gray-100 hover:text-gray-700 ${item.current ? "bg-gray-100 text-gray-700" : ""
+                  }`}
                 to={item.href}
               >
-                {item.icon}
+                <div className="text-blue-500 w-auto h-auto">
+                  {item.icon}
+                </div>
                 <span className="ml-2 text-md font-medium text-gray-700">
                   {item.name}
                 </span>

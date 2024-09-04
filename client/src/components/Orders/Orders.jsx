@@ -2,10 +2,12 @@ import React, { useEffect, useState, useContext } from "react";
 import { FaRegTrashCan } from "react-icons/fa6";
 import { FaRegEdit, FaTimes } from "react-icons/fa";
 import { FaSpinner } from "react-icons/fa6";
-import { FaPlus } from "react-icons/fa6";
 import EditOrderForm from "../Orders/OrdersForm";
+import { FaChevronDown, FaFileCsv } from "react-icons/fa";
+import ExportToCSV from "../Utils/ExportToCsv"
 import { toast } from "react-toastify";
 import axios from "axios";
+import Error from "../Error/Error"
 import ConfirmationModal from "../Utils/ConfirmationModal";
 
 const backendUrl = import.meta.env.VITE_BACKEND_URL;
@@ -163,7 +165,9 @@ function Orders() {
   }
 
   if (error) {
-    return <div className="flex justify-center items-center min-h-screen text-lg">Error: {error.message}</div>;
+    return (
+      <Error error={error} />
+    )
   }
 
   const indexOfLastItem = currentPage * itemsPerPage;
@@ -183,8 +187,6 @@ function Orders() {
     }
   };
 
-  console.log(orders)
-
   return (
     <section className="container px-4 mx-auto mt-8">
       <h2 className="text-lg font-medium text-gray-800">Orders Details</h2>
@@ -196,7 +198,14 @@ function Orders() {
           >
             <FaRegTrashCan size={24} />
           </button>
+
         )}
+        <button
+          onClick={() => ExportToCSV(orders, ("Orders-" + new Date().toLocaleDateString()))}
+          className="flex items-center justify-center h-12 w-12 px-2 text-white bg-blue-400 rounded-full hover:bg-blue-500 focus:outline-none"
+        >
+          <FaFileCsv size={28} />
+        </button>
       </div>
       {showEditOrderModal && (
         <div className="fixed inset-0 flex items-center justify-center z-50 bg-gray-900 bg-opacity-50">
@@ -240,15 +249,6 @@ function Orders() {
                   className="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 cursor-pointer"
                   onClick={() => handleSort("email")}
                 >
-                  Orderer Shipping Name
-                  {sortConfig.key === "email" &&
-                    (sortConfig.direction === "ascending" ? " ▲" : " ▼")}
-                </th>
-                <th
-                  scope="col"
-                  className="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 cursor-pointer"
-                  onClick={() => handleSort("email")}
-                >
                   Email
                   {sortConfig.key === "email" &&
                     (sortConfig.direction === "ascending" ? " ▲" : " ▼")}
@@ -285,7 +285,7 @@ function Orders() {
                   className="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 cursor-pointer"
                   onClick={() => handleSort("fulfillement")}
                 >
-                  Fulfillement{" "}
+                  Fulfillement
                   {sortConfig.key === "fulfillement" &&
                     (sortConfig.direction === "ascending" ? " ▲" : " ▼")}
                 </th>
@@ -319,16 +319,13 @@ function Orders() {
                     </div>
                   </td>
                   <td className="px-4 py-4 text-sm text-gray-800 whitespace-nowrap">
-                    {`${order.shipping_address.first_name} ${order.shipping_address.last_name}`}
-                  </td>
-                  <td className="px-4 py-4 text-sm text-gray-800 whitespace-nowrap">
-                    {order.email}
+                    {`${order.shipping_address?.first_name} ${order.shipping_address?.last_name}`}
                   </td>
                   <td className="px-4 py-4 text-sm text-gray-800 whitespace-nowrap">
                     {order.phone}
                   </td>
-                  <td className="px-4 py-4 text-sm text-gray-800 whitespace-nowrap">
-                    {`${order.shipping_address.address1} ${order.shipping_address.address2} ${order.shipping_address.city}`}
+                  <td className="px-4 py-4 text-sm text-gray-800 whitespace-nowrap truncate">
+                    {`${order.shipping_address?.address1} ${order?.shipping_address?.address2} ${order?.shipping_address?.city}`}
                   </td>
                   <td className="px-4 py-4 text-sm text-gray-800 whitespace-nowrap">
                     {order.total_price} DH
@@ -365,9 +362,8 @@ function Orders() {
       <div className="flex items-center justify-between mt-6">
         <button
           onClick={handlePreviousPage}
-          className={`flex items-center px-5 py-2 text-sm text-gray-700 capitalize transition-colors duration-200 bg-white border rounded-md gap-x-2 hover:bg-gray-100 ${
-            currentPage === 1 ? "opacity-50 cursor-not-allowed" : ""
-          }`}
+          className={`flex items-center px-5 py-2 text-sm text-gray-700 capitalize transition-colors duration-200 bg-white border rounded-md gap-x-2 hover:bg-gray-100 ${currentPage === 1 ? "opacity-50 cursor-not-allowed" : ""
+            }`}
           disabled={currentPage === 1}
         >
           <svg
@@ -391,11 +387,10 @@ function Orders() {
             <button
               key={index + 1}
               onClick={() => setCurrentPage(index + 1)}
-              className={`px-2 py-1 text-sm rounded-md ${
-                currentPage === index + 1
-                  ? "text-blue-500 bg-blue-100"
-                  : "text-gray-500 hover:bg-gray-100"
-              }`}
+              className={`px-2 py-1 text-sm rounded-md ${currentPage === index + 1
+                ? "text-blue-500 bg-blue-100"
+                : "text-gray-500 hover:bg-gray-100"
+                }`}
             >
               {index + 1}
             </button>
@@ -403,9 +398,8 @@ function Orders() {
         </div>
         <button
           onClick={handleNextPage}
-          className={`flex items-center px-5 py-2 text-sm text-gray-700 capitalize transition-colors duration-200 bg-white border rounded-md gap-x-2 hover:bg-gray-100 ${
-            currentPage === totalPages ? "opacity-50 cursor-not-allowed" : ""
-          }`}
+          className={`flex items-center px-5 py-2 text-sm text-gray-700 capitalize transition-colors duration-200 bg-white border rounded-md gap-x-2 hover:bg-gray-100 ${currentPage === totalPages ? "opacity-50 cursor-not-allowed" : ""
+            }`}
           disabled={currentPage === totalPages}
         >
           <span>Next</span>

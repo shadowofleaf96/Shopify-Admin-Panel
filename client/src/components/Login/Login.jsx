@@ -29,6 +29,7 @@ function Login() {
       navigate("/");
       setLoading(false);
     } catch (err) {
+      toast.error(error);
       setError(err.response.data.message || "An error occurred");
       setLoading(false);
     }

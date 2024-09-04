@@ -7,7 +7,28 @@ exports.getProductCount = async (req, res) => {
       const body = await response.json();
       res.status(200).json({ count: body.count });
     } else {
-      res.status(response.status).json({ error: "Failed to get products count" });
+      const errorBody = await response.json();
+      res
+        .status(response.status)
+        .json({ error: "Failed to get products count " + errorBody });
+    }
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+  res.end();
+};
+
+exports.getLocations = async (req, res) => {
+  try {
+    const response = await client.get("locations");
+    if (response.ok) {
+      const body = await response.json();
+      res.status(200).json({ body });
+    } else {
+      const errorBody = await response.json();
+      res
+        .status(response.status)
+        .json({ error: "Failed to get Locations count " + errorBody });
     }
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -23,7 +44,31 @@ exports.getAllProducts = async (req, res) => {
       const body = await response.json();
       res.status(200).json({ products: body.products });
     } else {
-      res.status(response.status).json({ error: "Failed to get all products" });
+      const errorBody = await response.json();
+      res
+        .status(response.status)
+        .json({ error: "Failed to get all products " + errorBody });
+    }
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+  res.end();
+};
+
+exports.getAllInventoryLevel = async (req, res) => {
+  try {
+    const response = await client.get(
+      "inventory_levels?location_ids=" + req.params.id
+    );
+
+    if (response.ok) {
+      const body = await response.json();
+      res.status(200).json({ inventory_levels: body.inventory_levels });
+    } else {
+      const errorBody = await response.json();
+      res
+        .status(response.status)
+        .json({ error: "Failed to get all Levels " + errorBody });
     }
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -38,7 +83,10 @@ exports.getProductInfo = async (req, res) => {
       const body = await response.json();
       res.status(200).json({ products: body.product });
     } else {
-      res.status(response.status).json({ error: "Failed to get product info" });
+      const errorBody = await response.json();
+      res
+        .status(response.status)
+        .json({ error: "Failed to get product info " + errorBody });
     }
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -58,7 +106,10 @@ exports.createProduct = async (req, res) => {
       const body = await response.json();
       res.status(200).json({ message: "this new product is created", body });
     } else {
-      res.status(response.status).json({ error: "Failed to create product" });
+      const errorBody = await response.json();
+      res
+        .status(response.status)
+        .json({ error: "Failed to create product" + errorBody });
     }
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -78,12 +129,35 @@ exports.updateProduct = async (req, res) => {
       const body = await response.json();
       res.status(200).json({ body });
     } else {
-      res.status(response.status).json({ error: "Failed to update product" });
+      const errorBody = await response.json();
+      res
+        .status(response.status)
+        .json({ error: "Failed to update product " + errorBody });
     }
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
   res.end();
+};
+
+exports.setItemLevel = async (req, res) => {
+  try {
+    const response = await client.post("inventory_levels/set", {
+      data: req.body,
+    });
+
+    if (response.ok) {
+      const body = await response.json();
+      res
+        .status(200)
+        .json({ message: "Item quantity level has been changed", body });
+    } else {
+      const errorBody = await response.json();
+      res.status(response.status).json({ message:"Failed to set product's quantity: " + errorBody.errors });
+    }
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
 };
 
 exports.addVariant = async (req, res) => {
@@ -101,7 +175,10 @@ exports.addVariant = async (req, res) => {
       const body = await response.json();
       res.status(200).json({ body });
     } else {
-      res.status(response.status).json({ error: "Failed to create variant" });
+      const errorBody = await response.json();
+      res
+        .status(response.status)
+        .json({ error: "Failed to create variant " + errorBody });
     }
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -124,7 +201,10 @@ exports.updateVariant = async (req, res) => {
       const body = await response.json();
       res.status(200).json({ body });
     } else {
-      res.status(response.status).json({ error: "Failed to update variant" });
+      const errorBody = await response.json();
+      res
+        .status(response.status)
+        .json({ error: "Failed to update variant " + errorBody });
     }
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -139,7 +219,10 @@ exports.deleteProduct = async (req, res) => {
       const body = await response.json();
       res.status(200).json({ message: "this product is deleted" });
     } else {
-      res.status(response.status).json({ error: "Failed to delete product" });
+      const errorBody = await response.json();
+      res
+        .status(response.status)
+        .json({ error: "Failed to delete product" + errorBody });
     }
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -156,7 +239,10 @@ exports.deleteVariant = async (req, res) => {
       const body = await response.json();
       res.status(200).json({ message: "this product's variant is deleted" });
     } else {
-      res.status(response.status).json({ error: "Failed to delete variant" });
+      const errorBody = await response.json();
+      res
+        .status(response.status)
+        .json({ error: "Failed to delete variant " + errorBody });
     }
   } catch (error) {
     res.status(500).json({ error: error.message });

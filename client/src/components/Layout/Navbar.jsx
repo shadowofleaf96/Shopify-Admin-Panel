@@ -22,7 +22,7 @@ function Navbar() {
         });
         setUser(response.data.user);
       } catch (error) {
-        console.error("Error fetching user info:", error);
+        // console.error("Error fetching user info:", error);
       }
     };
 

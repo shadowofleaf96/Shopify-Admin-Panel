@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 
-function Error() {
+function NotFound() {
   return (
     <section className="bg-white">
       <div className="container flex items-center min-h-screen px-6 py-12 mx-auto">
@@ -56,4 +56,4 @@ function Error() {
   );
 }
 
-export default Error;
+export default NotFound;

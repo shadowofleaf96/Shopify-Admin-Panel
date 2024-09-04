@@ -12,7 +12,6 @@ const VerifyRole = (req, res, next) => {
     }
     next();
   } catch (err) {
-    console.error(err);
     res.status(500).json({
       status: "error",
       code: 500,

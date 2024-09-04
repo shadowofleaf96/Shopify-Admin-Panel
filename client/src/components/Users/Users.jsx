@@ -7,6 +7,7 @@ import { FaPlus } from "react-icons/fa6";
 import AddUserForm from "../Users/UsersForm";
 import { toast } from "react-toastify";
 import axios from "axios";
+import Error from "../Error/Error"
 import ConfirmationModal from "../Utils/ConfirmationModal";
 
 const backendUrl = import.meta.env.VITE_BACKEND_URL;
@@ -181,15 +182,13 @@ function Users() {
       </div>
     );
   }
-  
+
   if (error) {
     return (
-      <div className="flex justify-center items-center min-h-screen text-lg">
-        Error: {error.message}
-      </div>
-    );
+      <Error error={error} />
+    )
   }
-
+  
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentItems = sortedUsers.slice(indexOfFirstItem, indexOfLastItem);
@@ -332,25 +331,22 @@ function Users() {
                   </td>
                   <td className="px-4 py-4 text-sm font-medium text-gray-800 whitespace-nowrap">
                     <div
-                      className={`inline-flex items-center px-3 py-1 rounded-full gap-x-2 ${
-                        user.status === "active"
+                      className={`inline-flex items-center px-3 py-1 rounded-full gap-x-2 ${user.status === "active"
                           ? "bg-emerald-100/60"
                           : "bg-red-100/60"
-                      }`}
+                        }`}
                     >
                       <span
-                        className={`h-1.5 w-1.5 rounded-full ${
-                          user.status === "active"
+                        className={`h-1.5 w-1.5 rounded-full ${user.status === "active"
                             ? "bg-emerald-500"
                             : "bg-red-500"
-                        }`}
+                          }`}
                       ></span>
                       <span
-                        className={`text-sm font-normal ${
-                          user.status === "active"
+                        className={`text-sm font-normal ${user.status === "active"
                             ? "text-emerald-500"
                             : "text-red-500"
-                        }`}
+                          }`}
                       >
                         {user.status.charAt(0).toUpperCase() +
                           user.status.slice(1)}
@@ -386,9 +382,8 @@ function Users() {
       <div className="flex items-center justify-between mt-6">
         <button
           onClick={handlePreviousPage}
-          className={`flex items-center px-5 py-2 text-sm text-gray-700 capitalize transition-colors duration-200 bg-white border rounded-md gap-x-2 hover:bg-gray-100 ${
-            currentPage === 1 ? "opacity-50 cursor-not-allowed" : ""
-          }`}
+          className={`flex items-center px-5 py-2 text-sm text-gray-700 capitalize transition-colors duration-200 bg-white border rounded-md gap-x-2 hover:bg-gray-100 ${currentPage === 1 ? "opacity-50 cursor-not-allowed" : ""
+            }`}
           disabled={currentPage === 1}
         >
           <svg
@@ -412,11 +407,10 @@ function Users() {
             <button
               key={index + 1}
               onClick={() => setCurrentPage(index + 1)}
-              className={`px-2 py-1 text-sm rounded-md ${
-                currentPage === index + 1
+              className={`px-2 py-1 text-sm rounded-md ${currentPage === index + 1
                   ? "text-blue-500 bg-blue-100"
                   : "text-gray-500 hover:bg-gray-100"
-              }`}
+                }`}
             >
               {index + 1}
             </button>
@@ -424,9 +418,8 @@ function Users() {
         </div>
         <button
           onClick={handleNextPage}
-          className={`flex items-center px-5 py-2 text-sm text-gray-700 capitalize transition-colors duration-200 bg-white border rounded-md gap-x-2 hover:bg-gray-100 ${
-            currentPage === totalPages ? "opacity-50 cursor-not-allowed" : ""
-          }`}
+          className={`flex items-center px-5 py-2 text-sm text-gray-700 capitalize transition-colors duration-200 bg-white border rounded-md gap-x-2 hover:bg-gray-100 ${currentPage === totalPages ? "opacity-50 cursor-not-allowed" : ""
+            }`}
           disabled={currentPage === totalPages}
         >
           <span>Next</span>
