@@ -77,6 +77,7 @@ exports.login = async (req, res) => {
       httpOnly: true,
       secure: "true",
       sameSite: "none",
+      path: "/"
     });
 
     const { password: _, ...user_data } = user._doc;
