@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { Bar, Line } from "react-chartjs-2";
 import "chart.js/auto";
-import axios from "axios";
 import Error from "../Error/Error"
 import { FaSpinner } from "react-icons/fa6";
 import { BsCartFill, BsCartCheckFill, BsCartXFill, BsCartPlusFill } from "react-icons/bs";
+import AxiosConfig from "../Utils/AxiosConfig";
 
 const Dashboard = () => {
   const [salesData, setSalesData] = useState([]);
@@ -21,7 +21,7 @@ const Dashboard = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const ordersResponse = await axios.get("http://localhost:3000/api/orders");
+        const ordersResponse = await AxiosConfig.get("/orders");
         const orders = ordersResponse.data.orders;
         setOrdersData(orders);
 
@@ -56,7 +56,7 @@ const Dashboard = () => {
 
         setOrdersData(ordersDataArray);
 
-        const productsResponse = await axios.get("http://localhost:3000/api/products");
+        const productsResponse = await AxiosConfig.get("/products");
         const products = productsResponse.data.products;
         const totalProducts = products.length;
         let inStock = 0;

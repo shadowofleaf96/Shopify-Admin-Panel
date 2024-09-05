@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+
 import { toast } from "react-toastify";
 import { FaSpinner } from "react-icons/fa6";
+import AxiosConfig from "../Utils/AxiosConfig";
 
 const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
@@ -66,13 +67,13 @@ function EditProductForm({ onClose, refreshProducts, initialData, isEditMode }) 
 
     try {
       if (isEditMode) {
-        await axios.put(
-          `${backendUrl}/api/products/${initialData.id}`,
+        await AxiosConfig.put(
+          `/products/${initialData.id}`,
           productData
         );
         toast.success("Product updated successfully!");
       } else {
-        await axios.post(`${backendUrl}/api/products`, productData);
+        await AxiosConfig.post(`/products`, productData);
         toast.success("Product created successfully!");
       }
 

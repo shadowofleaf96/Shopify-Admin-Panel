@@ -6,9 +6,10 @@ import EditOrderForm from "../Orders/OrdersForm";
 import { FaChevronDown, FaFileCsv } from "react-icons/fa";
 import ExportToCSV from "../Utils/ExportToCsv"
 import { toast } from "react-toastify";
-import axios from "axios";
+
 import Error from "../Error/Error"
 import ConfirmationModal from "../Utils/ConfirmationModal";
+import AxiosConfig from "../Utils/AxiosConfig";
 
 const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
@@ -33,7 +34,7 @@ function Orders() {
   const fetchOrders = async () => {
     setLoading(true);
     try {
-      const response = await axios.get(backendUrl + "/api/orders");
+      const response = await AxiosConfig.get("/orders");
       setOrders(response.data.orders);
     } catch (error) {
       setError(error);
@@ -70,7 +71,7 @@ function Orders() {
   const handleDeleteorder = async () => {
     try {
       setIsLoading(true);
-      await axios.delete(`${backendUrl}/api/orders/${orderToDelete}`);
+      await AxiosConfig.delete(`/orders/${orderToDelete}`);
       setOrders((prevOrders) =>
         prevOrders.filter((order) => order.id !== orderToDelete)
       );
@@ -114,7 +115,7 @@ function Orders() {
       setIsLoading(true);
       await Promise.all(
         orderToDelete.map((orderId) =>
-          axios.delete(`${backendUrl}/api/orders/${orderId}`)
+          AxiosConfig.delete(`/orders/${orderId}`)
         )
       );
       setOrders((prevOrders) =>

@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+
 import { toast } from "react-toastify";
 import { FaSpinner } from "react-icons/fa6";
+import AxiosConfig from "../Utils/AxiosConfig";
 
 const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
@@ -63,8 +64,8 @@ function EditOrderForm({ onClose, refreshOrders, initialData }) {
     };
 
     try {
-      await axios.put(
-        `${backendUrl}/api/orders/${initialData.id}`,
+      await AxiosConfig.put(
+        `/orders/${initialData.id}`,
         submittedOrderData
       );
       toast.success("Order updated successfully!");

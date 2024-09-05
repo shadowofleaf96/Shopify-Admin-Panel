@@ -70,21 +70,13 @@ exports.login = async (req, res) => {
 
     const token = user.generateAccessJWT();
 
-    // dont forgot about enabling httpOnly and secure in production
-    res.cookie("SessionID", token, {
-      domain: ".onrender.com",
-      maxAge: 30 * 24 * 60 * 60 * 1000,
-      httpOnly: true,
-      secure: "true",
-      path: "/",
-      sameSite: "none",
-    });
-
+    // Instead of setting the token in a cookie, include it in the response
     const { password: _, ...user_data } = user._doc;
 
     res.status(200).json({
       status: "success",
       data: user_data,
+      token, 
       message: "You have successfully logged in.",
     });
   } catch (err) {
@@ -233,43 +225,29 @@ exports.deleteUser = async (req, res) => {
 
 exports.logout = async (req, res) => {
   try {
-    const authHeader = req.headers["cookie"];
+    const authHeader = req.headers["authorization"];
     if (!authHeader) {
       return res
         .status(401)
         .json({ message: "No user is currently logged in." });
     }
 
-    const cookies = authHeader.split("; ").reduce((acc, cookie) => {
-      const [name, value] = cookie.split("=");
-      acc[name] = value;
-      return acc;
-    }, {});
-
-    const accessToken = cookies["SessionID"];
-    if (!accessToken) {
+    const token = authHeader.split(" ")[1];
+    if (!token) {
       return res
         .status(401)
         .json({ message: "No user is currently logged in." });
     }
 
-    const checkIfBlacklisted = await Blacklist.findOne({ token: accessToken });
+    const checkIfBlacklisted = await Blacklist.findOne({ token });
     if (checkIfBlacklisted) {
       return res
         .status(401)
         .json({ message: "The session is already terminated." });
     }
 
-    const newBlacklist = new Blacklist({ token: accessToken });
+    const newBlacklist = new Blacklist({ token });
     await newBlacklist.save();
-
-    res.clearCookie("SessionID", {
-      domain: ".onrender.com",
-      httpOnly: true,
-      secure: "true",
-      path: "/",
-      sameSite: "none",
-    });
 
     res.status(200).json({ message: "You have successfully logged out." });
   } catch (err) {

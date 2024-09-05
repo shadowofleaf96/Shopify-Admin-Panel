@@ -6,9 +6,10 @@ import { FaSpinner } from "react-icons/fa6";
 import { FaPlus } from "react-icons/fa6";
 import AddUserForm from "../Users/UsersForm";
 import { toast } from "react-toastify";
-import axios from "axios";
+
 import Error from "../Error/Error"
 import ConfirmationModal from "../Utils/ConfirmationModal";
+import AxiosConfig from "../Utils/AxiosConfig";
 
 const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
@@ -35,7 +36,7 @@ function Users() {
   const fetchUsers = async () => {
     setLoading(true);
     try {
-      const response = await axios.get(backendUrl + "/api/users/getallusers");
+      const response = await AxiosConfig.get("/users/getallusers");
       setUsers(response.data.users);
     } catch (error) {
       setError(error);
@@ -85,7 +86,7 @@ function Users() {
   const handleDeleteUser = async () => {
     try {
       setIsLoading(true);
-      await axios.delete(`${backendUrl}/api/users/${userToDelete}`);
+      await AxiosConfig.delete(`/users/${userToDelete}`);
       setUsers((prevUsers) =>
         prevUsers.filter((user) => user._id !== userToDelete)
       );
@@ -133,7 +134,7 @@ function Users() {
       setIsLoading(true);
       await Promise.all(
         userToDelete.map((userId) =>
-          axios.delete(`${backendUrl}/api/users/${userId}`)
+          AxiosConfig.delete(`/users/${userId}`)
         )
       );
       setUsers((prevUsers) =>

@@ -1,9 +1,11 @@
 import React, { useEffect, useState, useContext } from "react";
-import axios from "axios";
+
 import { useNavigate } from "react-router-dom";
 import { UserContext } from "../../context/UserContext";
 import { FiUser, FiLogOut } from "react-icons/fi";
 import { FaSpinner } from "react-icons/fa6";
+import { toast } from "react-toastify";
+import AxiosConfig from "../Utils/AxiosConfig";
 
 const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
@@ -17,7 +19,7 @@ function Navbar() {
   useEffect(() => {
     const fetchUserInfo = async () => {
       try {
-        const response = await axios.get(`${backendUrl}/api/users/profile`, {
+        const response = await AxiosConfig.get(`/users/profile`, {
           withCredentials: true,
         });
         setUser(response.data.user);
@@ -33,19 +35,31 @@ function Navbar() {
     setLoggedInUser(user?._id);
   }, [user]);
 
-  const handleLogout = () => {
-    setLoading(true);
-    axios
-      .get(`${backendUrl}/api/users/logout`, { withCredentials: true })
-      .then(() => {
-        setUser(null);
-        navigate("/login");
-        setLoading(false);
-      })
-      .catch((error) => {
-        console.error("Error logging out:", error);
-        setLoading(false);
-      });
+  const handleLogout = async () => {
+    try {
+      const token = localStorage.getItem("token");
+
+      if (!token) {
+        throw new Error("No user is currently logged in.");
+      }
+
+      await AxiosConfig.post(
+        `/users/logout`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      localStorage.removeItem("token");
+
+      navigate("/login");
+    } catch (err) {
+      console.error(err);
+      toast.error(err.response?.data?.message || "An error occurred");
+    }
   };
 
   return (

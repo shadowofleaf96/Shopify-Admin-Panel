@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+
 import { toast } from "react-toastify";
 import { FaSpinner } from "react-icons/fa6";
+import AxiosConfig from "../Utils/AxiosConfig";
 
 const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
@@ -61,13 +62,13 @@ function AddUserForm({
 
     try {
       if (isEditMode) {
-        await axios.put(
-          `${backendUrl}/api/users/${initialData._id}`,
+        await AxiosConfig.put(
+          `/users/${initialData._id}`,
           userData
         );
         toast.success("User updated successfully!");
       } else {
-        await axios.post(`${backendUrl}/api/users/register`, userData);
+        await AxiosConfig.post(`/users/register`, userData);
         toast.success("User added successfully!");
       }
 

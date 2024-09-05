@@ -1,8 +1,9 @@
 import React, { useState } from "react";
-import axios from "axios";
+
 import { useNavigate } from "react-router-dom";
 import { FaSpinner } from "react-icons/fa6";
 import { toast } from "react-toastify";
+import AxiosConfig from "../Utils/AxiosConfig";
 
 const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
@@ -17,16 +18,17 @@ function Login() {
     e.preventDefault();
     try {
       setLoading(true);
-      const response = await axios.post(
-        `${backendUrl}/api/users/login`,
-        { username, password },
-        { withCredentials: true }
-      );
+      const response = await AxiosConfig.post(`/users/login`, {
+        username,
+        password,
+      });
+  
+      localStorage.setItem("token", response.data.token);
+  
       navigate("/");
       setLoading(false);
     } catch (err) {
       toast.error(err);
-      console.log(err);
       setError(err.response.data.message || "An error occurred");
       setLoading(false);
     }

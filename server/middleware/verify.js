@@ -4,26 +4,28 @@ const jwt = require("jsonwebtoken");
 
 const Verify = (req, res, next) => {
   try {
-    const authHeader = req.headers["cookie"];
-    if (!authHeader) return res.sendStatus(401);
-    const cookie = authHeader.split("SessionID=")[1];
-    jwt.verify(
-      cookie,
-      process.env.SECRET_ACCESS_TOKEN,
-      async (err, decoded) => {
-        if (err) {
-          return res
-            .status(401)
-            .json({ message: "This session has expired. Please login" });
-        }
-
-        const { id } = decoded;
-        const user = await User.findById(id);
-        const { password, ...data } = user._doc;
-        req.user = data;
-        next();
+    const authHeader = req.headers["authorization"];
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+      return res.sendStatus(401);
+    }
+    
+    const token = authHeader.split(" ")[1];
+    
+    jwt.verify(token, process.env.SECRET_ACCESS_TOKEN, async (err, decoded) => {
+      if (err) {
+        return res.status(401).json({ message: "This session has expired. Please login" });
       }
-    );
+
+      const { id } = decoded;
+      const user = await User.findById(id);
+      if (!user) {
+        return res.status(401).json({ message: "User not found" });
+      }
+
+      const { password, ...data } = user._doc;
+      req.user = data;
+      next();
+    });
   } catch (err) {
     res.status(500).json({
       status: "error",
@@ -33,4 +35,5 @@ const Verify = (req, res, next) => {
     });
   }
 };
+
 module.exports = Verify;

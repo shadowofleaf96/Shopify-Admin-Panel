@@ -11,8 +11,9 @@ import { IoIosMore } from "react-icons/io";
 import { toast } from "react-toastify";
 import Error from "../Error/Error"
 import ExportToCSV from "../Utils/ExportToCsv"
-import axios from "axios";
+
 import ConfirmationModal from "../Utils/ConfirmationModal";
+import AxiosConfig from "../Utils/AxiosConfig";
 
 const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
@@ -49,7 +50,7 @@ function Products() {
   const fetchProducts = async () => {
     setLoading(true);
     try {
-      const response = await axios.get(backendUrl + "/api/products");
+      const response = await AxiosConfig.get("/products");
       setProducts(response.data.products);
     } catch (error) {
       setError(error);
@@ -118,7 +119,7 @@ function Products() {
   const handleDeleteProduct = async () => {
     try {
       setIsLoading(true);
-      await axios.delete(`${backendUrl}/api/products/${productToDelete}`);
+      await AxiosConfig.delete(`/products/${productToDelete}`);
       setProducts((prevProducts) =>
         prevProducts.filter((product) => product.id !== productToDelete)
       );
@@ -136,8 +137,8 @@ function Products() {
   const handleDeleteVariant = async () => {
     try {
       setIsLoading(true);
-      await axios.delete(
-        `${backendUrl}/api/products/${productToDelete}/variants/${variantToDelete}`
+      await AxiosConfig.delete(
+        `/products/${productToDelete}/variants/${variantToDelete}`
       );
 
       setProducts((prevProducts) =>
@@ -202,7 +203,7 @@ function Products() {
       setIsLoading(true);
       await Promise.all(
         productToDelete.map((productId) =>
-          axios.delete(`${backendUrl}/api/products/${productId}`)
+          AxiosConfig.delete(`/products/${productId}`)
         )
       );
       setProducts((prevProducts) =>
@@ -223,14 +224,14 @@ function Products() {
   const handleSetQuantity = async () => {
     try {
       setIsLoading(true);
-      const locationsResponse = await axios.get(`${backendUrl}/api/products/getlocations`);
+      const locationsResponse = await AxiosConfig.get(`/products/getlocations`);
       const locations = locationsResponse.data.body.locations;
 
       let foundLocationId = null;
 
       for (const location of locations) {
         const locationId = location.id;
-        const levelsResponse = await axios.get(`${backendUrl}/api/products/getlevels/${locationId}`);
+        const levelsResponse = await AxiosConfig.get(`/products/getlevels/${locationId}`);
         const levels = levelsResponse.data.inventory_levels;
 
         if (levels.some(level => level.inventory_item_id === selectedInventoryItemId)) {
@@ -239,7 +240,7 @@ function Products() {
         }
       }
 
-      const response = await axios.post(backendUrl + "/api/products/setlevels", {
+      const response = await AxiosConfig.post("/products/setlevels", {
         location_id: foundLocationId,
         inventory_item_id: selectedInventoryItemId,
         available: quantity,

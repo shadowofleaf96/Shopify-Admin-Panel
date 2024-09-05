@@ -1,9 +1,9 @@
 import { Outlet, Navigate } from 'react-router-dom';
 
 const ProtectedRoute = () => {
-  const isAuthenticated = document.cookie.includes('SessionID');
-  console.log(document.cookie)
-  console.log('isAuthenticated', isAuthenticated);
+  const token = localStorage.getItem('token');
+  const isAuthenticated = Boolean(token);
+
   return isAuthenticated ? <Outlet /> : <Navigate to="/login" />;
 };
 

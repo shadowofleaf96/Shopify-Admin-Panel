@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
 import { toast } from "react-toastify";
 import { FaSpinner } from "react-icons/fa";
+import AxiosConfig from "../Utils/AxiosConfig";
 
 const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
@@ -45,10 +45,10 @@ function EditVariantForm({ onClose, refreshVariants, initialData, isEditMode, pr
 
     try {
       if (isEditMode) {
-        await axios.put(`${backendUrl}/api/products/${product.id}/variants/${initialData.id}`, variantData);
+        await AxiosConfig.put(`/products/${product.id}/variants/${initialData.id}`, variantData);
         toast.success("Variant updated successfully!");
       } else {
-        await axios.post(`${backendUrl}/api/products/${product.id}/variants`, variantData);
+        await AxiosConfig.post(`/products/${product.id}/variants`, variantData);
         toast.success("Variant created successfully!");
       }
 

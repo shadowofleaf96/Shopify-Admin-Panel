@@ -10,7 +10,7 @@ const router = express.Router();
 router.get("/getuser/:id", userController.getUserInfo);
 router.get("/getallusers", userController.getAllUsers);
 router.get("/profile", Verify, userController.profile);
-router.get("/logout", userController.logout);
+router.post("/logout", userController.logout);
 router.post(
   "/register",
   upload.single("avatar"),
