@@ -72,6 +72,7 @@ exports.login = async (req, res) => {
 
     // dont forgot about enabling httpOnly and secure in production
     res.cookie("SessionID", token, {
+      domain: ".onrender.com",
       maxAge: 30 * 24 * 60 * 60 * 1000,
       httpOnly: true,
       secure: "true",
@@ -263,8 +264,10 @@ exports.logout = async (req, res) => {
     await newBlacklist.save();
 
     res.clearCookie("SessionID", {
+      domain: ".onrender.com",
       httpOnly: true,
       secure: "true",
+      path: "/",
       sameSite: "none",
     });
 
