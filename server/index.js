@@ -69,7 +69,7 @@ app.use("/api/products", productRoutes);
 app.use("/api/orders", orderRoutes);
 
 app.get("/", (req, res) => {
-  res.send("https://shopify-admin-panel.onrender.com");
+  res.redirect("https://shopify-admin-panel.onrender.com");
 });
 
 app.listen(port, () => {
