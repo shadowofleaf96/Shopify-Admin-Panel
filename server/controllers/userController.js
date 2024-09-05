@@ -74,7 +74,7 @@ exports.login = async (req, res) => {
 
     res.cookie("SessionID", token, {
       maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
-      httpOnly: false,
+      httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "Strict",
     });
@@ -263,7 +263,7 @@ exports.logout = async (req, res) => {
     await newBlacklist.save();
 
     res.clearCookie("SessionID", {
-      httpOnly: false,
+      httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "Strict",
     });
