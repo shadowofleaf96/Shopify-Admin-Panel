@@ -75,7 +75,7 @@ exports.login = async (req, res) => {
     res.cookie("SessionID", token, {
       maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
+      secure: true,
       sameSite: "none",
     });
 
@@ -264,7 +264,7 @@ exports.logout = async (req, res) => {
 
     res.clearCookie("SessionID", {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
+      secure: true,
       sameSite: "none",
     });
 

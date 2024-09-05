@@ -68,8 +68,8 @@ app.use("/api/users", userRoutes);
 app.use("/api/products", productRoutes);
 app.use("/api/orders", orderRoutes);
 
-app.use("/", async (req, res) => {
-  return res.redirect("https://shopify-admin-panel.onrender.com");
+app.get("/", (req, res) => {
+  res.send("https://shopify-admin-panel.onrender.com");
 });
 
 app.listen(port, () => {
