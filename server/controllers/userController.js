@@ -76,7 +76,7 @@ exports.login = async (req, res) => {
       maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
       httpOnly: true,
       secure: "true",
-      domain: 'shopify-admin-backend-i3nk.onrender.com',
+      domain: '.onrender.com',
       sameSite: "none",
     });
 
