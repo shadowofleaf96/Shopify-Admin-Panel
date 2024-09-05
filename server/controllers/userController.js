@@ -76,7 +76,7 @@ exports.login = async (req, res) => {
       maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
-      sameSite: "lax",
+      sameSite: "None",
     });
 
     const { password: _, ...user_data } = user._doc;
@@ -265,7 +265,7 @@ exports.logout = async (req, res) => {
     res.clearCookie("SessionID", {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
-      sameSite: "lax",
+      sameSite: "None",
     });
 
     res.status(200).json({ message: "You have successfully logged out." });
