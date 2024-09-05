@@ -38,7 +38,7 @@ const corsOptions = {
     "x-client-secret",
     "Authorization",
   ],
-  credentials: true,
+  credentials: true, // Allows credentials
 };
 
 app.use(cors(corsOptions));
