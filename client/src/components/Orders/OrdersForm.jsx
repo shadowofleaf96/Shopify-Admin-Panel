@@ -144,12 +144,13 @@ function EditOrderForm({ onClose, refreshOrders, initialData }) {
             Phone Number
           </label>
           <input
-            type="text"
+            type="tel"
             id="phoneNumber"
             name="phoneNumber"
             placeholder="060"
             value={formData.phoneNumber}
             onChange={handleChange}
+            pattern="[0-9]*"
             required
             className="border bg-white border-gray-300 p-2 rounded w-full"
           />
