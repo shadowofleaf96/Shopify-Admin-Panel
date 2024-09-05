@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { FaSpinner } from "react-icons/fa6";
+import { toast } from "react-toastify";
 
 const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
