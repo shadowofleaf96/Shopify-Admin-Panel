@@ -17,7 +17,7 @@ function Navbar() {
   useEffect(() => {
     const fetchUserInfo = async () => {
       try {
-        const response = await axios.get(`${backendUrl}api/users/profile`, {
+        const response = await axios.get(`${backendUrl}/api/users/profile`, {
           withCredentials: true,
         });
         setUser(response.data.user);
@@ -36,7 +36,7 @@ function Navbar() {
   const handleLogout = () => {
     setLoading(true);
     axios
-      .get(`${backendUrl}api/users/logout`, { withCredentials: true })
+      .get(`${backendUrl}/api/users/logout`, { withCredentials: true })
       .then(() => {
         setUser(null);
         navigate("/login");
@@ -130,7 +130,7 @@ function Navbar() {
                   >
                     <img
                       className="inline-block h-[38px] w-[38px] rounded-full ring-2 ring-white"
-                      src={backendUrl + user.avatar}
+                      src={backendUrl + "/" + user.avatar}
                       alt="User Avatar"
                     />
                   </button>
@@ -152,13 +152,13 @@ function Navbar() {
                               <FaSpinner size={18} className="animate-spin text-gray-500" />
                             </div>
                           )) || (
-                            <div className="py-2 px-4 flex items-center gap-2">
-                              <FiLogOut className="text-red-900" />
-                              <span className="block text-sm font-semibold">
-                                Logout
-                              </span>
-                            </div>
-                          )}
+                              <div className="py-2 px-4 flex items-center gap-2">
+                                <FiLogOut className="text-red-900" />
+                                <span className="block text-sm font-semibold">
+                                  Logout
+                                </span>
+                              </div>
+                            )}
                         </button>
                       </div>
                     </div>

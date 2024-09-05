@@ -18,7 +18,7 @@ function Login() {
     try {
       setLoading(true);
       const response = await axios.post(
-        `${backendUrl}api/users/login`,
+        `${backendUrl}/api/users/login`,
         {
           username,
           password,

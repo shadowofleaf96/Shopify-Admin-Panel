@@ -62,12 +62,12 @@ function AddUserForm({
     try {
       if (isEditMode) {
         await axios.put(
-          `${backendUrl}api/users/${initialData._id}`,
+          `${backendUrl}/api/users/${initialData._id}`,
           userData
         );
         toast.success("User updated successfully!");
       } else {
-        await axios.post(`${backendUrl}api/users/register`, userData);
+        await axios.post(`${backendUrl}/api/users/register`, userData);
         toast.success("User added successfully!");
       }
 

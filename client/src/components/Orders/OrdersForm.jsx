@@ -64,7 +64,7 @@ function EditOrderForm({ onClose, refreshOrders, initialData }) {
 
     try {
       await axios.put(
-        `${backendUrl}api/orders/${initialData.id}`,
+        `${backendUrl}/api/orders/${initialData.id}`,
         submittedOrderData
       );
       toast.success("Order updated successfully!");

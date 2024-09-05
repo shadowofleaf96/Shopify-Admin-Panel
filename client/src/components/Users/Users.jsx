@@ -35,7 +35,7 @@ function Users() {
   const fetchUsers = async () => {
     setLoading(true);
     try {
-      const response = await axios.get(backendUrl + "api/users/getallusers");
+      const response = await axios.get(backendUrl + "/api/users/getallusers");
       setUsers(response.data.users);
     } catch (error) {
       setError(error);
@@ -85,7 +85,7 @@ function Users() {
   const handleDeleteUser = async () => {
     try {
       setIsLoading(true);
-      await axios.delete(`${backendUrl}api/users/${userToDelete}`);
+      await axios.delete(`${backendUrl}/api/users/${userToDelete}`);
       setUsers((prevUsers) =>
         prevUsers.filter((user) => user._id !== userToDelete)
       );
@@ -133,7 +133,7 @@ function Users() {
       setIsLoading(true);
       await Promise.all(
         userToDelete.map((userId) =>
-          axios.delete(`${backendUrl}api/users/${userId}`)
+          axios.delete(`${backendUrl}/api/users/${userId}`)
         )
       );
       setUsers((prevUsers) =>
@@ -188,7 +188,7 @@ function Users() {
       <Error error={error} />
     )
   }
-  
+
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentItems = sortedUsers.slice(indexOfFirstItem, indexOfLastItem);
@@ -313,7 +313,7 @@ function Users() {
                     <div className="flex items-center">
                       <img
                         className="object-cover w-10 h-10 rounded-full mr-2"
-                        src={backendUrl + user.avatar}
+                        src={backendUrl + "/" + user.avatar}
                         alt={user.username + " avatar"}
                       />
                       <div>
@@ -332,20 +332,20 @@ function Users() {
                   <td className="px-4 py-4 text-sm font-medium text-gray-800 whitespace-nowrap">
                     <div
                       className={`inline-flex items-center px-3 py-1 rounded-full gap-x-2 ${user.status === "active"
-                          ? "bg-emerald-100/60"
-                          : "bg-red-100/60"
+                        ? "bg-emerald-100/60"
+                        : "bg-red-100/60"
                         }`}
                     >
                       <span
                         className={`h-1.5 w-1.5 rounded-full ${user.status === "active"
-                            ? "bg-emerald-500"
-                            : "bg-red-500"
+                          ? "bg-emerald-500"
+                          : "bg-red-500"
                           }`}
                       ></span>
                       <span
                         className={`text-sm font-normal ${user.status === "active"
-                            ? "text-emerald-500"
-                            : "text-red-500"
+                          ? "text-emerald-500"
+                          : "text-red-500"
                           }`}
                       >
                         {user.status.charAt(0).toUpperCase() +
@@ -408,8 +408,8 @@ function Users() {
               key={index + 1}
               onClick={() => setCurrentPage(index + 1)}
               className={`px-2 py-1 text-sm rounded-md ${currentPage === index + 1
-                  ? "text-blue-500 bg-blue-100"
-                  : "text-gray-500 hover:bg-gray-100"
+                ? "text-blue-500 bg-blue-100"
+                : "text-gray-500 hover:bg-gray-100"
                 }`}
             >
               {index + 1}

@@ -33,7 +33,7 @@ function Orders() {
   const fetchOrders = async () => {
     setLoading(true);
     try {
-      const response = await axios.get(backendUrl + "api/orders");
+      const response = await axios.get(backendUrl + "/api/orders");
       setOrders(response.data.orders);
     } catch (error) {
       setError(error);
@@ -70,7 +70,7 @@ function Orders() {
   const handleDeleteorder = async () => {
     try {
       setIsLoading(true);
-      await axios.delete(`${backendUrl}api/orders/${orderToDelete}`);
+      await axios.delete(`${backendUrl}/api/orders/${orderToDelete}`);
       setOrders((prevOrders) =>
         prevOrders.filter((order) => order.id !== orderToDelete)
       );
@@ -114,7 +114,7 @@ function Orders() {
       setIsLoading(true);
       await Promise.all(
         orderToDelete.map((orderId) =>
-          axios.delete(`${backendUrl}api/orders/${orderId}`)
+          axios.delete(`${backendUrl}/api/orders/${orderId}`)
         )
       );
       setOrders((prevOrders) =>

@@ -67,12 +67,12 @@ function EditProductForm({ onClose, refreshProducts, initialData, isEditMode }) 
     try {
       if (isEditMode) {
         await axios.put(
-          `${backendUrl}api/products/${initialData.id}`,
+          `${backendUrl}/api/products/${initialData.id}`,
           productData
         );
         toast.success("Product updated successfully!");
       } else {
-        await axios.post(`${backendUrl}api/products`, productData);
+        await axios.post(`${backendUrl}/api/products`, productData);
         toast.success("Product created successfully!");
       }
 

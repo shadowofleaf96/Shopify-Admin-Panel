@@ -45,10 +45,10 @@ function EditVariantForm({ onClose, refreshVariants, initialData, isEditMode, pr
 
     try {
       if (isEditMode) {
-        await axios.put(`${backendUrl}api/products/${product.id}/variants/${initialData.id}`, variantData);
+        await axios.put(`${backendUrl}/api/products/${product.id}/variants/${initialData.id}`, variantData);
         toast.success("Variant updated successfully!");
       } else {
-        await axios.post(`${backendUrl}api/products/${product.id}/variants`, variantData);
+        await axios.post(`${backendUrl}/api/products/${product.id}/variants`, variantData);
         toast.success("Variant created successfully!");
       }
 

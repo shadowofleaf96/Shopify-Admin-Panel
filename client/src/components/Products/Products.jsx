@@ -49,7 +49,7 @@ function Products() {
   const fetchProducts = async () => {
     setLoading(true);
     try {
-      const response = await axios.get(backendUrl + "api/products");
+      const response = await axios.get(backendUrl + "/api/products");
       setProducts(response.data.products);
     } catch (error) {
       setError(error);
@@ -118,7 +118,7 @@ function Products() {
   const handleDeleteProduct = async () => {
     try {
       setIsLoading(true);
-      await axios.delete(`${backendUrl}api/products/${productToDelete}`);
+      await axios.delete(`${backendUrl}/api/products/${productToDelete}`);
       setProducts((prevProducts) =>
         prevProducts.filter((product) => product.id !== productToDelete)
       );
@@ -137,7 +137,7 @@ function Products() {
     try {
       setIsLoading(true);
       await axios.delete(
-        `${backendUrl}api/products/${productToDelete}/variants/${variantToDelete}`
+        `${backendUrl}/api/products/${productToDelete}/variants/${variantToDelete}`
       );
 
       setProducts((prevProducts) =>
@@ -202,7 +202,7 @@ function Products() {
       setIsLoading(true);
       await Promise.all(
         productToDelete.map((productId) =>
-          axios.delete(`${backendUrl}api/products/${productId}`)
+          axios.delete(`${backendUrl}/api/products/${productId}`)
         )
       );
       setProducts((prevProducts) =>
@@ -223,14 +223,14 @@ function Products() {
   const handleSetQuantity = async () => {
     try {
       setIsLoading(true);
-      const locationsResponse = await axios.get(`${backendUrl}api/products/getlocations`);
+      const locationsResponse = await axios.get(`${backendUrl}/api/products/getlocations`);
       const locations = locationsResponse.data.body.locations;
 
       let foundLocationId = null;
 
       for (const location of locations) {
         const locationId = location.id;
-        const levelsResponse = await axios.get(`${backendUrl}api/products/getlevels/${locationId}`);
+        const levelsResponse = await axios.get(`${backendUrl}/api/products/getlevels/${locationId}`);
         const levels = levelsResponse.data.inventory_levels;
 
         if (levels.some(level => level.inventory_item_id === selectedInventoryItemId)) {
@@ -239,7 +239,7 @@ function Products() {
         }
       }
 
-      const response = await axios.post(backendUrl + "api/products/setlevels", {
+      const response = await axios.post(backendUrl + "/api/products/setlevels", {
         location_id: foundLocationId,
         inventory_item_id: selectedInventoryItemId,
         available: quantity,
