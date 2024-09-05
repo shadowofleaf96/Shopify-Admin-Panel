@@ -14,7 +14,11 @@ const app = express();
 connectDB();
 
 const port = process.env.PORT || 3000;
-const allowedOrigins = ["http://localhost:4173", "http://localhost:5173", "https://shopify-admin-panel.onrender.com"];
+const allowedOrigins = [
+  "http://localhost:4173",
+  "http://localhost:5173",
+  "https://shopify-admin-panel.onrender.com",
+];
 const corsOptions = {
   origin: function (origin, callback) {
     if (allowedOrigins.indexOf(origin) !== -1 || !origin) {
@@ -59,9 +63,9 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json({ limit: "2mb" }));
 
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
-app.use("/",  async (req, res) => {
-  return res.redirect("https://shopify-admin-panel.onrender.com/")
-}
+app.use("/", async (req, res) => {
+  return res.redirect("https://shopify-admin-panel.onrender.com/");
+});
 
 app.use("/api/users", userRoutes);
 app.use("/api/products", productRoutes);
