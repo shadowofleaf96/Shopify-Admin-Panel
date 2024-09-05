@@ -74,10 +74,9 @@ exports.login = async (req, res) => {
 
     res.cookie("SessionID", token, {
       maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
-      httpOnly: true,
-      secure: "true",
-      domain: '.onrender.com',
-      sameSite: "none",
+      httpOnly: true ,
+      secure: true,
+      sameSite: 'none',
     });
 
     const { password: _, ...user_data } = user._doc;
