@@ -59,6 +59,9 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json({ limit: "2mb" }));
 
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+app.use("/",  async (req, res) => {
+  return res.redirect("https://shopify-admin-panel.onrender.com/")
+}
 
 app.use("/api/users", userRoutes);
 app.use("/api/products", productRoutes);
