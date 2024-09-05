@@ -22,7 +22,7 @@ function Navbar() {
         });
         setUser(response.data.user);
       } catch (error) {
-        // console.error("Error fetching user info:", error);
+        console.error("Error fetching user info:", error);
       }
     };
 
@@ -149,7 +149,7 @@ function Navbar() {
                         >
                           {(loading && (
                             <div className="py-2 px-4 flex items-center mx-auto gap-2">
-                              <FaSpinner size={18} className="animate-spin text-gray-500" />
+                              <FaSpinner size={18} className="animate-spin text-blue-500" />
                             </div>
                           )) || (
                               <div className="py-2 px-4 flex items-center gap-2">

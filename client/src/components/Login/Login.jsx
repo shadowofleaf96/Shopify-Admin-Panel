@@ -19,18 +19,14 @@ function Login() {
       setLoading(true);
       const response = await axios.post(
         `${backendUrl}/api/users/login`,
-        {
-          username,
-          password,
-        },
-        {
-          withCredentials: true,
-        }
+        { username, password },
+        { withCredentials: true }
       );
       navigate("/");
       setLoading(false);
     } catch (err) {
-      toast.error(error);
+      toast.error(err);
+      console.log(err);
       setError(err.response.data.message || "An error occurred");
       setLoading(false);
     }
@@ -88,10 +84,10 @@ function Login() {
                 <FaSpinner size={22} className="py-0.5 animate-spin text-white mx-auto" />
               </button>
             )) || (
-              <button className="w-full px-6 py-2.5 text-sm font-medium tracking-wide text-white capitalize transition-colors duration-300 transform bg-gray-800 rounded-lg hover:bg-gray-700 focus:outline-none focus:ring focus:ring-gray-300 focus:ring-opacity-50">
-                <div className="py-0.5">Sign In</div>
-              </button>
-            )}
+                <button className="w-full px-6 py-2.5 text-sm font-medium tracking-wide text-white capitalize transition-colors duration-300 transform bg-gray-800 rounded-lg hover:bg-gray-700 focus:outline-none focus:ring focus:ring-gray-300 focus:ring-opacity-50">
+                  <div className="py-0.5">Sign In</div>
+                </button>
+              )}
           </div>
         </form>
       </div>

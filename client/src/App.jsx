@@ -18,7 +18,7 @@ function App() {
       <Suspense
         fallback={
           <div className="flex justify-center items-center min-h-screen">
-            <FaSpinner size={40} className="animate-spin text-gray-500" />
+            <FaSpinner size={40} className="animate-spin text-blue-500" />
           </div>
         }
       >

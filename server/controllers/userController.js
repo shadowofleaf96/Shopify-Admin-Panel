@@ -71,12 +71,12 @@ exports.login = async (req, res) => {
     const token = user.generateAccessJWT();
 
     // dont forgot about enabling httpOnly and secure in production
-
     res.cookie("SessionID", token, {
-      maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
-      httpOnly: true ,
-      secure: true,
-      sameSite: 'none',
+      maxAge: 30 * 24 * 60 * 60 * 1000,
+      httpOnly: true,
+      secure: "true",
+      path: "/",
+      sameSite: "none",
     });
 
     const { password: _, ...user_data } = user._doc;
