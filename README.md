@@ -17,7 +17,7 @@ Welcome to JoTiYa, an open-source MERN (MongoDB, Express.js, React.js, Node.js) 
 ## Features
 
 - **User Authentication**: Secure user authentication and authorization. (Completed)
-- **Product Management**: Easily manage products, categories, subcategories... (Completed)
+- **Product Management**: Easily manage products, categories, variants... (Completed)
 - **Order Management**: Track and manage customer orders efficiently. (Completed)
 - **Users Management**: Manage admins and users. (Completed)
 - **Dashboard Page**: See and analyze products, orders and sales. (Completed)
