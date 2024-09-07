@@ -1,6 +1,8 @@
 # JoTiYa Admin Panel Project
 
-<img style="display:flex; justify-content:center;" src="https://github.com/shadowofleaf96/Shopify-Admin-Panel/blob/06f1a58c55965f418755e4badf59142b42e3fffe/client/public/LOGO_APP.webp" alt="JoTiYa Logo" width="120"/>
+<p align="center">
+  <img src="https://github.com/shadowofleaf96/Shopify-Admin-Panel/blob/06f1a58c55965f418755e4badf59142b42e3fffe/client/public/LOGO_APP.webp" alt="JoTiYa Logo" width="120"/>
+</p>
 
 Welcome to JoTiYa, an open-source MERN (MongoDB, Express.js, React.js, Node.js) stack Shopify Admin Panel project. JoTiYa is designed to provide a foundation for building a robust and scalable Admin Panel for your Shopify Store.
 
