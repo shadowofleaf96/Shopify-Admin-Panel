@@ -1,4 +1,9 @@
 const client = require("../middleware/shopifyMiddleware");
+const { check, validationResult } = require("express-validator");
+
+const validateProductId = [
+  check("id").isNumeric().withMessage("Product ID must be a number"),
+];
 
 exports.getProductCount = async (req, res) => {
   try {
@@ -77,6 +82,13 @@ exports.getAllInventoryLevel = async (req, res) => {
 };
 
 exports.getProductInfo = async (req, res) => {
+  await Promise.all(validateProductId.map((validation) => validation.run(req)));
+
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
+
   try {
     const response = await client.get("products/" + req.params.id);
     if (response.ok) {
@@ -118,6 +130,13 @@ exports.createProduct = async (req, res) => {
 };
 
 exports.updateProduct = async (req, res) => {
+   await Promise.all(validateProductId.map(validation => validation.run(req)));
+
+   const errors = validationResult(req);
+   if (!errors.isEmpty()) {
+     return res.status(400).json({ errors: errors.array() });
+   }
+ 
   try {
     const response = await client.put("products/" + req.params.id, {
       data: {
@@ -153,7 +172,11 @@ exports.setItemLevel = async (req, res) => {
         .json({ message: "Item quantity level has been changed", body });
     } else {
       const errorBody = await response.json();
-      res.status(response.status).json({ message:"Failed to set product's quantity: " + errorBody.errors });
+      res
+        .status(response.status)
+        .json({
+          message: "Failed to set product's quantity: " + errorBody.errors,
+        });
     }
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -161,6 +184,13 @@ exports.setItemLevel = async (req, res) => {
 };
 
 exports.addVariant = async (req, res) => {
+   await Promise.all(validateProductId.map(validation => validation.run(req)));
+
+   const errors = validationResult(req);
+   if (!errors.isEmpty()) {
+     return res.status(400).json({ errors: errors.array() });
+   }
+ 
   try {
     const response = await client.post(
       "products/" + req.params.id + "/variants",
@@ -187,6 +217,12 @@ exports.addVariant = async (req, res) => {
 };
 
 exports.updateVariant = async (req, res) => {
+   await Promise.all(validateProductId.map(validation => validation.run(req)));
+
+   const errors = validationResult(req);
+   if (!errors.isEmpty()) {
+     return res.status(400).json({ errors: errors.array() });
+   }
   try {
     const response = await client.put(
       "products/" + req.params.id + "/variants/" + req.params.variant,
@@ -213,6 +249,12 @@ exports.updateVariant = async (req, res) => {
 };
 
 exports.deleteProduct = async (req, res) => {
+   await Promise.all(validateProductId.map(validation => validation.run(req)));
+
+   const errors = validationResult(req);
+   if (!errors.isEmpty()) {
+     return res.status(400).json({ errors: errors.array() });
+   }
   try {
     const response = await client.delete("products/" + req.params.id);
     if (response.ok) {
@@ -231,6 +273,12 @@ exports.deleteProduct = async (req, res) => {
 };
 
 exports.deleteVariant = async (req, res) => {
+  await Promise.all(validateProductId.map(validation => validation.run(req)));
+
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
   try {
     const response = await client.delete(
       "products/" + req.params.id + "/variants/" + req.params.variant

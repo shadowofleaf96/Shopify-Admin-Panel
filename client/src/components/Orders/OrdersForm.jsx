@@ -81,7 +81,6 @@ function EditOrderForm({ onClose, refreshOrders, initialData }) {
       refreshOrders();
       onClose();
     } catch (error) {
-      console.error(error);
       toast.error("An error occurred. Please try again.");
     } finally {
       setIsSubmitting(false);

@@ -79,7 +79,6 @@ function Orders() {
       setIsLoading(false);
       closeModal();
     } catch (error) {
-      console.error("Error deleting order:", error);
       toast.error("Error deleting Orders:", error);
       setError(error);
       setIsLoading(false);
@@ -126,7 +125,6 @@ function Orders() {
       toast.success("order or Orders deleted successfully");
       setIsLoading(false);
     } catch (error) {
-      console.error("Error deleting Orders:", error);
       toast.error("Error deleting Orders:", error);
       setError(error);
       setIsLoading(false);

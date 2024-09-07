@@ -89,7 +89,6 @@ function EditProductForm({ onClose, refreshProducts, initialData, isEditMode }) 
       refreshProducts();
       onClose();
     } catch (error) {
-      console.error(error);
       toast.error("An error occurred. Please try again.");
     } finally {
       setIsSubmitting(false);

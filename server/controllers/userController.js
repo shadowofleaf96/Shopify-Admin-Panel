@@ -70,7 +70,6 @@ exports.login = async (req, res) => {
 
     const token = user.generateAccessJWT();
 
-    // Instead of setting the token in a cookie, include it in the response
     const { password: _, ...user_data } = user._doc;
 
     res.status(200).json({

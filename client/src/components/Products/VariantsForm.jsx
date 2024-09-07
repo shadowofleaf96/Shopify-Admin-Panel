@@ -60,7 +60,6 @@ function EditVariantForm({ onClose, refreshVariants, initialData, isEditMode, pr
       refreshVariants();
       onClose();
     } catch (error) {
-      console.error('Error:', error);
       toast.error("An error occurred. Please try again.");
     } finally {
       setIsSubmitting(false);

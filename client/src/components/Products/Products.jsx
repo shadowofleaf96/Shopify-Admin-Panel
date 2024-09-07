@@ -127,7 +127,6 @@ function Products() {
       setIsLoading(false);
       closeModal();
     } catch (error) {
-      console.error("Error deleting Product:", error);
       toast.error("Error deleting Product:", error);
       setError(error);
       setIsLoading(false);
@@ -159,7 +158,6 @@ function Products() {
       setIsLoading(false);
       closeModal();
     } catch (error) {
-      console.error("Error deleting Product:", error);
       toast.error("Error deleting Product:", error);
       setError(error);
       setIsLoading(false);
@@ -214,7 +212,6 @@ function Products() {
       toast.success("Product or Products deleted successfully");
       setIsLoading(false);
     } catch (error) {
-      console.error("Error deleting Products:", error);
       toast.error("Error deleting Products:", error);
       setError(error);
       setIsLoading(false);
