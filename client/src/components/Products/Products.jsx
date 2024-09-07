@@ -498,7 +498,7 @@ function Products() {
                           alt={product.image?.alt}
                         />
                         <div>
-                          <h2 className="font-medium text-gray-800 truncate">
+                          <h2 className="w-48 font-medium text-gray-800 truncate text-xs sm:text-sm md:text-sm lg:text-md xl:text-md">
                             {product.title}
                           </h2>
                           {/* <p className="text-sm font-normal text-gray-800">

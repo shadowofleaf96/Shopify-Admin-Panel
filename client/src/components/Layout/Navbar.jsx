@@ -24,7 +24,7 @@ function Navbar() {
         });
         setUser(response.data.user);
       } catch (error) {
-        console.error("Error fetching user info:", error);
+        toast.error("Error fetching user info:", error);
       }
     };
 
@@ -57,7 +57,6 @@ function Navbar() {
 
       navigate("/login");
     } catch (err) {
-      console.error(err);
       toast.error(err.response?.data?.message || "An error occurred");
     }
   };

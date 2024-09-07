@@ -3,6 +3,7 @@ import { Bar, Line } from "react-chartjs-2";
 import "chart.js/auto";
 import Error from "../Error/Error"
 import { FaSpinner } from "react-icons/fa6";
+import { toast } from "react-toastify";
 import { BsCartFill, BsCartCheckFill, BsCartXFill, BsCartPlusFill } from "react-icons/bs";
 import AxiosConfig from "../Utils/AxiosConfig";
 
@@ -80,8 +81,9 @@ const Dashboard = () => {
 
         setLoading(false);
       } catch (error) {
-        console.error("Error fetching data:", error);
+
         setError(error);
+        toast.error("Error fetching data:", error);
         setLoading(false);
       }
     };

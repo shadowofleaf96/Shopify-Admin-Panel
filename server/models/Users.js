@@ -59,7 +59,7 @@ UserSchema.methods.generateAccessJWT = function () {
     id: this._id,
   };
   return jwt.sign(payload, process.env.SECRET_ACCESS_TOKEN, {
-    expiresIn: "30d",
+    expiresIn: "10d",
   });
 };
 

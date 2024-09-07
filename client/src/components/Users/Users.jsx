@@ -94,7 +94,6 @@ function Users() {
       setIsLoading(false);
       closeModal();
     } catch (error) {
-      console.error("Error deleting user:", error);
       toast.error("Error deleting users:", error);
       setError(error);
       setIsLoading(false);
@@ -145,7 +144,6 @@ function Users() {
       toast.success("User or Users deleted successfully");
       setIsLoading(false);
     } catch (error) {
-      console.error("Error deleting users:", error);
       toast.error("Error deleting users:", error);
       setError(error);
       setIsLoading(false);
