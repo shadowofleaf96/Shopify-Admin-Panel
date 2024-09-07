@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useContext } from "react";
+import React, { useEffect, useState, useContext, useRef } from "react";
 import { FaRegTrashCan } from "react-icons/fa6";
 import { FaRegEdit, FaTimes } from "react-icons/fa";
 import { FaSpinner } from "react-icons/fa6";
@@ -45,6 +45,22 @@ function Products() {
   const [editingVariant, setEditingVariant] = useState(null);
   const [editingProductForVariant, setEditingProductForVariant] =
     useState(null);
+  const dropdownRef = useRef(null);
+
+  const handleClickOutside = (event) => {
+    if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+      setIsOpen(null);
+      setIsVariantOpen(null)
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener("mousedown", handleClickOutside);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   const itemsPerPage = 5;
   const fetchProducts = async () => {
@@ -543,7 +559,7 @@ function Products() {
                       </div>
                     </td>
                     <td className="px-4 py-4 text-sm whitespace-nowrap">
-                      <div className="relative">
+                      <div className="relative" ref={dropdownRef}>
                         <button
                           className="text-gray-500 transition-colors duration-200 hover:text-blue-500 focus:outline-none"
                           onClick={() => setIsOpen(isOpen === product.id ? null : product.id)}
@@ -631,7 +647,7 @@ function Products() {
                         <td className="px-4 py-4 text-sm font-medium text-gray-800 whitespace-nowrap">
                         </td>
                         <td className="px-4 py-4 text-sm whitespace-nowrap">
-                          <div className="relative">
+                          <div className="relative" ref={dropdownRef}>
                             <button
                               className="text-gray-500 transition-colors duration-200 hover:text-blue-500 focus:outline-none"
                               onClick={() => setIsVariantOpen(isVariantOpen === variant.id ? null : variant.id)}
