@@ -1,4 +1,4 @@
-# JoTiYa Admin Panel Project
+# JoTiYa Admin Panel
 
 <p align="center">
   <img src="https://github.com/shadowofleaf96/Shopify-Admin-Panel/blob/06f1a58c55965f418755e4badf59142b42e3fffe/client/public/LOGO_APP.webp" alt="JoTiYa Logo" width="120"/>
