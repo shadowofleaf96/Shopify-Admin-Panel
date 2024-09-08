@@ -50,7 +50,7 @@ function Products() {
   const handleClickOutside = (event) => {
     if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
       setIsOpen(null);
-      setIsVariantOpen(null)
+      setIsVariantOpen(null);
     }
   };
 
@@ -569,7 +569,8 @@ function Products() {
                           </div>
                         </button>
                         {isOpen === product.id && (
-                          <div className="absolute right-0 mt-2 w-40 bg-white border border-gray-200 rounded-md shadow-lg z-10">
+                          <div className="absolute right-0 mt-2 w-40 bg-white border border-gray-200 rounded-md shadow-lg z-10"
+                            onMouseDown={(e) => e.stopPropagation()}>
                             {product.variants.length === 1 && (
                               <button
                                 className="flex items-center w-full px-4 py-2 text-gray-500 hover:bg-gray-100"
@@ -657,7 +658,7 @@ function Products() {
                               </div>
                             </button>
                             {isVariantOpen === variant.id && (
-                              <div className="absolute right-0 mt-2 w-40 bg-white border border-gray-200 rounded-md shadow-lg z-10">
+                              <div className="absolute right-0 mt-2 w-40 bg-white border border-gray-200 rounded-md shadow-lg z-10" onMouseDown={(e) => e.stopPropagation()} >
                                 <button
                                   className="flex items-center w-full px-4 py-2 text-yellow-500 hover:bg-gray-100"
                                   onClick={() => {

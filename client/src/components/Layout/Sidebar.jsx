@@ -42,7 +42,7 @@ function Sidebar() {
             {SideElements.map((item) => (
               <Link
                 key={item.name}
-                className={`flex items-center px-3 py-2 text-gray-700 transition-colors duration-300 transform rounded-lg hover:bg-gray-100 hover:text-gray-700 ${item.current ? "bg-gray-100 text-gray-700" : ""
+                className={`flex text-xs md:text-sm lg:text-md xl:text-lg items-center px-3 py-2 text-gray-700 transition-colors duration-300 transform rounded-lg hover:bg-gray-100 hover:text-gray-700 ${item.current ? "bg-gray-100 text-gray-700" : ""
                   }`}
                 to={item.href}
               >
